@@ -72,40 +72,21 @@ const lng = -122.08385
 }
 
 
+
 /*
-<div id="map" >
-      <MapContainer center={[51.505, -0.09]} zoom={13} scrollWheelZoom={true}>
-        <View center={[37.38605, -122.08385]} />
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
 
-      </MapContainer>
-            
-    </div>
+import { useContext } from "react"
+import { Auth } from "../context/Auth"
 
-    2.
+export const useLogout = () => {
+    const {dispatch} = useContext(Auth)
 
-     {  usersData.map(user => (
-    
-        <Marker
-        key = {user.id}
-        position={[user.geo.lat, user.geo.lng]}>
-              
-        </Marker>     
-        ))}
-       
-3.
+    const logout = () => {
+        // delete user from the localstorage
+        localStorage.removeItem('user')
+        // Wipe out the Auth context (user:null) / dipatch 'LOGOUT'
+        dispatch({type: "LOGOUT"})
+    }
 
-const filteredUser = userData.filter(user => user.address === "UK")
-
-{  usersData.map(user => (
-    
-<Marker 
-key = {user.id}
-position={[user.latitud, user.longitude]}/>
-       
-</Marker>     
-}
-*/
+    return {logout}
+}*/

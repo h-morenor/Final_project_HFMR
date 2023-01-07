@@ -1,0 +1,60 @@
+const { default: mongoose } = require("mongoose");
+
+const Schema = mongoose.Schema;
+
+const GroupSchema = new Schema(
+  {
+    selectedImage:
+    {
+        data: Buffer,
+        contentType: String,
+        required: false,
+    },
+    title: {
+      type: String,
+      required: true,
+    },
+    //can be created by an user or a group
+    createdBy: {
+        type: Schema.Types.ObjectId, 
+        ref: 'User'
+    },
+
+    description: {
+      type: String,
+      required: false,
+    },
+    //a business can select up to 1000?
+    max_people: {
+      type: { type: Number, max: 1000 },
+      required: false,
+    },
+    /*Joining fee. Maybe not in the first phase?
+    cost: {
+      type: Number,
+      required: false,
+    },*/
+    category: {
+      type: Array,
+      required: true,
+    },
+    hashtag: {
+      type: Array,
+      required: false,
+    },
+    venueLocation:
+    {
+        type: Array,
+        required: false,
+    },
+    admins: {
+        type: Schema.Types.ObjectId, 
+        ref: 'User'},
+    followers: {
+        type: Array,
+    required: false,},
+  },
+  { timestamps: true }
+);
+
+module.exports = mongoose.model("Group", GroupSchema);

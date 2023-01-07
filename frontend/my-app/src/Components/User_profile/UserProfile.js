@@ -1,6 +1,6 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
-import Header from "./Header"
+import Header from "../Header"
 
 export default function UserProfile() {
   return (
@@ -13,7 +13,7 @@ export default function UserProfile() {
             <p>If a dog chews shoes whose shoes does he choose?</p>
             <div className="card-actions justify-end">
             
-            <button className="btn btn-primary"><NavLink to="/logged/user">Close</NavLink></button>
+            <button className="btn btn-primary"><NavLink to="/logged/user/id">Close</NavLink></button>
             </div>
         </div>
         </div>

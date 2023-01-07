@@ -1,10 +1,10 @@
 import React from 'react'
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 export default function hero() {
   return (
     <div>
-        <div className="hero " style={{ backgroundImage: `url("https://placeimg.com/1000/800/arch")` }}>
+        <div className="hero -z-1" style={{ backgroundImage: `url("https://placeimg.com/1000/800/arch")` }}>
             <div className="hero-overlay bg-opacity-60"></div>
             <div className="hero-content text-center text-neutral-content">
                 <div className="max-w-md">

@@ -1,10 +1,9 @@
-
 import React from 'react'
-import marker from "../assets/person-fill.svg"
+import marker from "../../assets/person-fill.svg"
 import L from 'leaflet'
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
 import { Map, useMap } from "react-leaflet";
-import usersData from "./Data/userData.json"
+import usersData from "../Data/userData.json"
 
 export default function AccessPage() {
 
@@ -70,42 +69,3 @@ const lng = -122.08385
     </div>
   )
 }
-
-
-/*
-<div id="map" >
-      <MapContainer center={[51.505, -0.09]} zoom={13} scrollWheelZoom={true}>
-        <View center={[37.38605, -122.08385]} />
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-
-      </MapContainer>
-            
-    </div>
-
-    2.
-
-     {  usersData.map(user => (
-    
-        <Marker
-        key = {user.id}
-        position={[user.geo.lat, user.geo.lng]}>
-              
-        </Marker>     
-        ))}
-       
-3.
-
-const filteredUser = userData.filter(user => user.address === "UK")
-
-{  usersData.map(user => (
-    
-<Marker 
-key = {user.id}
-position={[user.latitud, user.longitude]}/>
-       
-</Marker>     
-}
-*/
