@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
 const AuthMiddleware = async (req, res, next) => {
-  if (req.method === "GET" && req.path !== '/user/mygroups') {
+  if (req.method === "GET" && req.path !== '/mygroups') {
     return next();
   }
 

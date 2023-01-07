@@ -14,24 +14,27 @@ const login = async (req, res) => {
 
     //Create the JWT
     const token = generateToken(user._id);
-    res.status(200).json({email: user.email, token});
+    res.status(200).json({ email: user.email, token });
   } catch (error) {
     res.status(400).json(error.message);
   }
 };
 
-
 // Signup the user
 const signup = async (req, res) => {
   const { email, password } = req.body;
-console.log(req.body)
+  console.log(req.body);
   try {
     const user = await User.signup(email, password);
 
-    //Create the JWT
-  //  const token = generateToken(user._id);
+    // Create the JWT
+    const token = generateToken(user._id);
+    const response = {
+      email: user.email,
+      token: token,
+    }
 
-    res.status(200).json(user);
+    res.status(200).json(response);
   } catch (error) {
     res.status(400).json(error.message);
   }
