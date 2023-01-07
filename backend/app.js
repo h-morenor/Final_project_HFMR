@@ -28,7 +28,7 @@ app.use("/api/users", userRoutes)
 app.use("/api/group",groupRoutes)
 
 mongoose
-  .connect(process.env.MONGO_URL)
+  .connect(process.env.MONGODB_URL)
   .then(() => {
     console.log("connected to MongoDB!");
   })

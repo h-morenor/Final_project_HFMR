@@ -34,15 +34,15 @@ const GroupSchema = new Schema(
       type: Number,
       required: false,
     },*/
-    category: {
+    category: { //TODO-Moe: convert to string
       type: Array,
       required: true,
     },
-    hashtag: {
+    hashtag: { //TODO-Moe: Change to tags?
       type: Array,
       required: false,
     },
-    venueLocation:
+    venueLocation: // TODO-Moe: Use string then string.slice('')
     {
         type: Array,
         required: false,
