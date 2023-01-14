@@ -60,7 +60,7 @@ const handleNewGroup = async (event) => {
 
     const group = { selectedImage, title, createdBy, description, max_people, category, hashtag, venueLocation };
 
-    const response = await fetch("/api/group/:id/new", {
+    const response = await fetch("/api/group/new", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

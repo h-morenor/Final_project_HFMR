@@ -16,7 +16,7 @@ export default function Header() {
  
   const {errorLocation, getLocation} = useLocation();
 
-  const handleLocation = async () => { getLocation()}
+  //const handleLocation = async () => { getLocation()}
 
 
   return (
@@ -32,13 +32,13 @@ export default function Header() {
              {user && (<button                           className="p-2 border border-red-400 rounded-md"   >   <NavLink replace to="/:id/new">New Group</NavLink>       </button>      )}
              {user && (<button  onClick={handleLogout}   className="p-2 border border-red-400 rounded-md"   >   <NavLink replace to="/login">Logout</NavLink>      </button>      )}
              </div>
-            <div className="dropdown dropdown-end">
-                <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
+            <div className="dropdown dropdown-end ">
+                <label tabIndex={0} className="btn btn-ghost btn-circle avatar md:z-10">
                     <div className="w-10 rounded-full">
                     <img src="https://placeimg.com/80/80/people" />
                     </div>
                 </label>
-                <ul tabIndex={0} className="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52">
+                <ul tabIndex={0} className="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52 md:z-10">
                     <li className="justify-between"><NavLink to="/logged/user/id/profile">Profile</NavLink></li>
                     <li><a>Settings</a></li>
                     <li onClick={handleLogout}> <NavLink replace to="/login">Signout</NavLink></li>

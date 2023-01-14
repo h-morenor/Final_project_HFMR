@@ -17,17 +17,24 @@ import GroupsAround from './Components/Group_around/Group_around';
 import { useContext, useState } from "react";
 
 //import { useContext } from 'react'
-//import { Auth } from '../src/context/Auth';
+import { Auth } from '../src/context/Auth';
 import { useEffect } from "react"
 import NewGroup from './Components/Group_profile/NewGroup';
 import GroupCard from './Components/Group_profile/GroupCard';
 import useFetchGroups from './hooks/useFetchGroups';
+import { DataContext } from './context/DataContext';
+
+import { useLocation } from './hooks/useLocation';
+import EditUser from './Components/User_profile/EditUser';
+import ModifyGroup from './Components/Group_profile/ModifyGroup';
 
 function App() {
 
-  const [groups, setGroups] = useFetchGroups()
- // const [groups, setGroups] = useState([]);
- //const { user } = useContext(Auth);
+  //const { user } = useContext(Auth);
+  //const [groups, setGroups] = useFetchGroups()
+  const [groups, setGroups] = useState([]);
+
+  const [location, setLocation] = useState([]);
 
   const { logout } = useLogout();
       
@@ -46,16 +53,19 @@ function App() {
         <Route path="/signup" element={<Signup/>}/>
       </Route>
       <Route element={<LayoutApp/>} groups={groups} setGroups={setGroups}>
-        <Route path="/logged/user/:id" element={<AccessPage/>}/>
-        <Route path="/logged/user/:id/groupsAround" element={<GroupsAround/>}/>
-        <Route path="/logged/user/:id/peopleAround" element={<PeopleAround/>}/>
-        <Route path="/user/mygroups" element={<MyGroups/>} groups={groups} setGroups={setGroups}/>
+        <Route path="/logged/user/:id" element={<GroupsAround/>} groups={groups} setGroups={setGroups} location={location} setLocation={setLocation}/>
+        <Route path="/groupsAround" element={<GroupsAround/>} groups={groups} setGroups={setGroups} location={location} setLocation={setLocation} />
+        <Route path="/peopleAround" element={<PeopleAround/>}/>
+        <Route path="/mygroups" element={<MyGroups/>} />
         <Route path="/logged/user/:id/messages" element={<Messages/>}/>
         <Route path="/logged/user/:id/messages/conversation" element={<Conversation/>}/>
         <Route path="/:id/new" element={<NewGroup/>}/>
-        <Route path="/group/:id" element={<GroupCard/>} groups={groups} setGroups={setGroups}/>
+        <Route path="/group/:id" element={<GroupCard/>} />
+        <Route path="/logged/user/id/profile" element={<UserProfile/>}/>
+        <Route path="/group/edit/:id" element={<ModifyGroup/>}/>
+        <Route path="/user/edit" element={<EditUser/>}/>
       </Route>
-      <Route path="/logged/user/id/profile" element={<UserProfile/>}/>
+     
 
       
     </Routes>

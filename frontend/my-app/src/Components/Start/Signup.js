@@ -38,7 +38,7 @@ export default function Signup() {
                     </div>
                     <div className="form-control mt-6">
                     <button disabled={isLoading} onClick={handleSignup} className="btn btn-primary">Signup</button>
-                     {user && (<Navigate replace to="/logged/user/id"/>)}
+                     {user && (<Navigate replace to="/groupsAround"/>)}
                             {error && (
                                 <div>
                                     <p>{error}</p>

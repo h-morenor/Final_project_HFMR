@@ -28,7 +28,6 @@ const icon = new L.icon({
     
     const show = () => {
         usersData.map(user => {   
-            console.log("hola")
             console.log(user.address.geo.lat)
             console.log( user.address.geo.lng)
         }

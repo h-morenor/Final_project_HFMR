@@ -19,7 +19,6 @@ const GroupSchema = new Schema(
         type: Schema.Types.ObjectId, 
         ref: 'User'
     },
-
     description: {
       type: String,
       required: false,

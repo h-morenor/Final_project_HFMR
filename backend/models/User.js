@@ -14,6 +14,18 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
+  name:{
+    type: String,
+    required: false,
+  },
+  age:{
+    type: Number,
+    required: false,
+  },
+  description:{
+    type: String,
+    required: false,
+  },
   /*Use same account for group
   user_group_account:{
     type: Boolean,

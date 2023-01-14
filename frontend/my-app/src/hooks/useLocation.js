@@ -1,18 +1,19 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 
 
 export const useLocation = () => {
 
   const [errorLocation, setErrorLocation] = useState(null);
-  const [location, setLocation] = useState(null);
+  const [location, setLocation] = useState([]);
   
   const getLocation = () => {
      if(navigator.geolocation)  {
       navigator.geolocation.getCurrentPosition
       (position=> {
-      getaddress(position.coords.latitude, position.coords.longitude)
-      console.log(position.coords.latitude)
-      console.log(position.coords.longitude)
+      //getaddress(position.coords.latitude, position.coords.longitude)
+      setLocation([position.coords.latitude, position.coords.longitude])
+      //console.log(position.coords.latitude)
+      //console.log(position.coords.longitude)
       setErrorLocation(null)
       });
       }else{
@@ -21,13 +22,20 @@ export const useLocation = () => {
     } 
   }
 
+  /*const getaddress = (lat, long) => {
+    setLocation([lat, long])
+    //console.log(location)
+  }*/
 
-  const getaddress = (lat, long) => {
-    console.log(lat, long)
-    setLocation(lat, long)
-  }
-
-     return { errorLocation, getLocation }
+  useEffect(() => {
+    getLocation()
+    
+console.log("got location")
+    console.log(location)
+  }, []) 
+  
+     return  [location, setLocation]
 }
+export default useLocation
 
 

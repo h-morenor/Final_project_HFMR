@@ -43,7 +43,7 @@ const getAndCheckOwnership = async (id, user_id) => {
 
 //1. Create a group // TODO-Moe: Create Category model
 const createGroup = async (req, res) => {
-  const { title, category, venueLocation, hashtag } = req.body;
+  const { title, category, venueLocation, hashtag, description } = req.body;
 
   //add to a database
   try {
@@ -53,6 +53,7 @@ const createGroup = async (req, res) => {
       category,
       venueLocation,
       hashtag,
+      description,
       subcribers: [req.user._id], //Hint: We can count this and get number of followers
     });
 
@@ -80,125 +81,35 @@ const getGroups = async (req, res) => {
   }
 };
 
-//////// PART 3
-
-//Another 1
-
-const anotherFind = async (groupId) => {
-  const group = await Group.findById(groupId);
-  return group;
-};
-
-//Another 2
-
-const anotherFunction2 = async (groups, array, val) => {
-  //try{
-  //val = [];
-  const groupsArray = groups.map(async (group) => {
-    const groupId = group.id;
-
-    const response = await anotherFind(groupId);
-    //try{
-    //console.log(response)
-    //val.push(response)
-    val = addArray(response, array);
-    //array.push(response)
-    //console.log(val)
-    //return val
-    //}catch {(console.log("Error"))}
-  });
-  //try{
-  console.log(val);
-  /*groupsArray
-   .then(res => {
-       console.log(res)
-       console.log("hi")
-    })*/
-
-  //}catch {(console.log("Error1"))}
-  console.log("hi");
-  return groupsArray;
-};
-
-//AQdd
-
-const addArray = (response, array) => {
-  array.push(response);
-  //array = [...array, response]
-  return array;
-};
-
-// Helper find groups
-
-const findGroup = async (groups, res) => {
-  const array = [];
-  const groupArray = await anotherFunction2(groups, array);
-  //try{
-  //console.log(groupArray)
-  //}catch {(console.log("Error"))}
-  //console.log(groupArray)
-
-  /*
- .then(res => {
-       console.log(res)
-    })*/
-
-  //try{console.log(groupsArray)}catch {(console.log("Error"))}
-
-  //console.log(array)
-  //const subgroup = findGroup(groups, array)
-
-  //return groupsArray
-
-  res.status(200).json(groupArray);
-};
-
 //3. Display user groups
-const getMyGroups = async (req, res) => {
-  const fullGroups = [];
 
-  const fetchGroupDetails = async (id) => {
-    const group = await Group.findById(id);
-    fullGroups.push(group);
-  };
-
-  const { _id } = req.user;
-
+// Moe-Harold scribbles:
+const getMyGroups2 = async (req, res) => {
   try {
-    const user = await User.findById(_id);
-    const groups = user.myGroups;
+    const userId = req.user._id;
+    console.log(userId);
 
-    // const groupsArray = await groups.map(group =>  Group.findById(group.id))
-    // TEST
-    // array = await findGroup(groups, array)
+    const user = await User.findById(userId);
 
-    res.status(200).json(groups);
+    const arrayOfGroupIds = user.myGroups;
+    console.log(arrayOfGroupIds);
+
+    const groups = await Group.find(
+      { _id: { $in: arrayOfGroupIds } },
+      { _id: 1, title: 1, createdBy: 1, followers: 1, category: 1 }
+    );
+
+    const processedGroups = groups.map((group) => {
+      return { ...group._doc, followersCount: group.followers.length };
+    });
+
+    console.log(processedGroups);
+
+    res.status(200).json(processedGroups);
   } catch (error) {
-    res.status(400).json(error);
+    console.log(error.message);
   }
 };
-// try{
-//    const groupsArray = groups.map(group => {
-//      const groupId = group.id
-//      const subgroup = findGroup(groupId, array)
-
-/* .then(result => {   
-       // array.push(result)
-       // console.log(result)
-      })*/
-
-//console.log(subgroup)
-// subgroup.then(result => {array.push(result)})
-//    })
-
-//console.log(result)
-//groupsArray.then(console.log(array))
-//groupsArray.then(result => console.log(result))
-//    res.status(200).json(groupsArray);
-// } catch (error) {
-//   res.status(400).json(error);
-// }
-//  };
 
 //4.
 //Get specific group by its ID
@@ -219,7 +130,7 @@ const getGroup = async (req, res) => {
   res.status(200).json(group);
 };
 
-//Update group information
+//5. Update group information
 
 const updateGroup = async (req, res) => {
   const { id } = req.params;
@@ -243,7 +154,7 @@ const updateGroup = async (req, res) => {
   }
 };
 
-//Join group
+//6. Join group
 
 const joinGroup = async (req, res) => {
   const { id } = req.params;
@@ -286,7 +197,7 @@ const joinGroup = async (req, res) => {
   }
 };
 
-//Exit group
+//7. Exit group
 
 const exitGroup = async (req, res) => {
   const { id } = req.params;
@@ -371,7 +282,7 @@ const findUserDeleteFollower = async (followerId, groupId, user, res) => {
   }
 };
 
-//Delete group
+//8. Delete group
 const deleteGroup = async (req, res) => {
   const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -429,33 +340,6 @@ const deleteGroup = async (req, res) => {
   }
 };
 
-// Moe-Harold scribbles:
-const getMyGroups2 = async (req, res) => {
-  try {
-    const userId = req.user._id;
-    console.log(userId);
-
-    const user = await User.findById(userId);
-
-    const arrayOfGroupIds = user.myGroups;
-    console.log(arrayOfGroupIds);
-
-    const groups = await Group.find(
-      { _id: { $in: arrayOfGroupIds } },
-      { _id: 1, title: 1, createdBy: 1, followers: 1, category: 1 }
-    );
-
-    const processedGroups = groups.map((group) => {
-      return { ...group._doc, followersCount: group.followers.length };
-    });
-
-    console.log(processedGroups);
-
-    res.status(200).json(processedGroups);
-  } catch (error) {
-    console.log(error.message);
-  }
-};
 
 module.exports = {
   createGroup,
@@ -464,7 +348,6 @@ module.exports = {
   updateGroup,
   deleteGroup,
   joinGroup,
-  getMyGroups, // This is old
   exitGroup,
   getMyGroups2, // This is new
 };
