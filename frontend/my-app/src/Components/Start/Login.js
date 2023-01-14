@@ -42,7 +42,7 @@ export default function Login() {
                     </div>
                     <div className="form-control mt-6">
                     <button disabled={isLoading} onClick={handleLogin}  className="btn btn-primary">Login</button>
-                    {user && (<Navigate replace to="/groupsAround"/>)}
+                    
                     
                     {error && (
                                 <div>
@@ -57,6 +57,8 @@ export default function Login() {
 }
 
 /*
+{user && (<Navigate replace to="/groupsAround"/>)}
+
 {user && (Navigate("/logged/user/id"))}
 navigate("/logged/user/id");
 {user && {handleLocation}}

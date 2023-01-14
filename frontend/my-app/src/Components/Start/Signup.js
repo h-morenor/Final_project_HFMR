@@ -11,8 +11,10 @@ export default function Signup() {
   const { error, isLoading, signup } = useSignup(); 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
 
-  const handleSignup = async () => {  await signup(email, password);  };
+
+  const handleSignup = async () => {  await signup(email, password, passwordConfirm);  };
 
   return (
      <div>
@@ -23,22 +25,42 @@ export default function Signup() {
                         <span className="label-text">Email</span>
                         </label>
                         
-                        <input type="text" placeholder="email" value={email} onChange={(e) => {   setEmail(e.target.value);  }} className="input input-bordered" />
+                        <input 
+                        type="text" 
+                        placeholder="email" 
+                        value={email} onChange={(e) => {   setEmail(e.target.value);  }} 
+                        className="input input-bordered"
+                        required="yes"
+                         />
                     </div>
                     <div className="form-control">
                     <label className="label">
                         <span className="label-text">Password</span>
                     </label>
-                    <input type="text" placeholder="password" value={password}    onChange={(e) => {     setPassword(e.target.value);    }} className="input input-bordered" />
+                    <input 
+                        type="text" 
+                        placeholder="password" 
+                        value={password}    
+                        onChange={(e) => {setPassword(e.target.value);}} 
+                        className="input input-bordered" 
+                        required="yes"
+                        />
                     <label className="label">
                         <span className="label-text">Confirm Password</span>
                     </label>
-                    <input type="text" placeholder="Confirm password" className="input input-bordered" />
+                    <input 
+                        type="text" 
+                        placeholder="Confirm password" 
+                        value={passwordConfirm}  
+                        onChange={(e) => {setPasswordConfirm(e.target.value);}} 
+                        className="input input-bordered"
+                        required="yes"
+                        />
                     
                     </div>
                     <div className="form-control mt-6">
                     <button disabled={isLoading} onClick={handleSignup} className="btn btn-primary">Signup</button>
-                     {user && (<Navigate replace to="/groupsAround"/>)}
+                     
                             {error && (
                                 <div>
                                     <p>{error}</p>
@@ -50,10 +72,4 @@ export default function Signup() {
     </div>
   )
 }
-
-//<NavLink to="/logged/user">Signup</NavLink>
-//{user && (<button  onClick={handleLogout}   className="p-2 border border-red-400 rounded-md"   >   Logout      </button>      )}
-//{user && (<NavLink to="/logged/user">Signup</NavLink>  )}
-//<NavLink replace to="/login">Signout</NavLink>
-
-//{user && (<Navigate replace to="/logged/user/id"/>)}
+//{user && (<Navigate replace to="/groupsAround"/>)}

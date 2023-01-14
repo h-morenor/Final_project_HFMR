@@ -1,10 +1,10 @@
 import { useContext, useState, useEffect } from "react";
 
 
-export const useLocation = () => {
+export const useLocation = (location, setLocation) => {
 
   const [errorLocation, setErrorLocation] = useState(null);
-  const [location, setLocation] = useState([]);
+   [location, setLocation] = useState([]);
   
   const getLocation = () => {
      if(navigator.geolocation)  {
@@ -34,7 +34,7 @@ console.log("got location")
     console.log(location)
   }, []) 
   
-     return  [location, setLocation]
+     return  {getLocation}
 }
 export default useLocation
 

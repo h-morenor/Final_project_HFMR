@@ -8,9 +8,15 @@ export const useSignup = () => {
 
   const  { dispatch }  = useContext(Auth);
 
-  const signup = async (email, password) => {
+  const signup = async (email, password, passwordConfirm) => {
     setIsLoading(true);
     setError(null);
+
+    if (password!=passwordConfirm){
+      setIsLoading(false);
+      setError("Password confirm not valid")
+      return
+    }
 
     const response = await fetch("/api/users/signup", {
       method: "POST",

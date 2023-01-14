@@ -13,8 +13,8 @@ const authReducer = (state, action) => {
       return { user: action.payload };
     case "LOGOUT":
       return { user: null };
-    default:
-      return { user: null };
+  //  default:
+    //  return { user: null };
   }
 };
 
@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
 
     if (user) {
       dispatch({ type: "LOGIN", payload: user });
-      return(<NavLink replace to="/logged/user/id"></NavLink>)
+ //     return(<NavLink replace to="/logged/user/id"></NavLink>)
     }
   }, []);
 
