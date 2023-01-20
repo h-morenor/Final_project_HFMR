@@ -10,10 +10,12 @@ export default function Footer() {
         <span className="indicator-item  badge-secondary"></span> 
         <button className="btn"><NavLink to="/groupsAround">Groups around</NavLink> </button>
         </div>
-        <div className="indicator">
+        
+<div className="indicator">
         <span className="indicator-item  badge-secondary "></span> 
         <button className="btn"><NavLink to="/peopleAround">People around</NavLink> </button>
         </div>
+
         <div className="indicator">
         <span className="indicator-item  badge-secondary "></span> 
         <button className="btn"><NavLink to="/mygroups">My Groups</NavLink> </button>
@@ -32,3 +34,8 @@ export default function Footer() {
     </div>
   )
 }
+
+
+/*
+
+        */

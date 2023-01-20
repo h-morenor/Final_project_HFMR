@@ -16,6 +16,23 @@ body {
   pointer-events: none;
 }
 
+/*Geolocation*/
+
+.autocomplete-container {
+  /*the container must be positioned relative:*/
+  position: relative;
+}
+
+.autocomplete-container input {
+  width: calc(100% - 43px);
+  outline: none;
+
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  padding-right: 31px;
+  font-size: 16px;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
@@ -44,4 +61,8 @@ body {
   to {
     transform: rotate(360deg);
   }
+}
+
+.geocoder-control-input {
+  background-image: url("https://raw.githubusercontent.com/Esri/esri-leaflet-geocoder/master/src/img/search.png");
 }

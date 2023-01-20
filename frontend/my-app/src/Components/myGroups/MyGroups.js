@@ -3,7 +3,6 @@ import { useState, useEffect, useContext } from 'react';
 import { Auth } from '../../context/Auth';
 import GroupCardList from './GroupCardList';
 
-
 export default function MyGroups() {
   
   const {user} = useContext(Auth)

@@ -33,6 +33,8 @@ function App() {
   const { user } = useContext(Auth);
   //const [groups, setGroups] = useFetchGroups()
   const [groups, setGroups] = useState([]);
+  const [group, setGroup] = useState();
+
 
   const [location, setLocation] = useState([]);
 
@@ -42,8 +44,10 @@ function App() {
     
 
 useEffect(() => {
+  if (user) {
  getLocation(location, setLocation)
  console.log(location)
+  }
   }, []);
 
   /*useEffect(() => {
@@ -59,7 +63,7 @@ useEffect(() => {
         <Route path="/login" element={!user ? ( <Login/> ) : (  <Navigate to="/groupsAround" />  ) } />
         <Route path="/signup" element={!user ? ( <Signup/> ) : (  <Navigate to="/groupsAround" />  )}/>
       </Route>
-      <Route element={user ? ( <LayoutApp/> ) : (  <Navigate to="/login"/>)} groups={groups} setGroups={setGroups}>
+      <Route element={user ? ( <LayoutApp/> ) : (  <Navigate to="/login"/>)} groups={groups} setGroups={setGroups} >
         <Route path="/logged/user/:id" element={<GroupsAround/>} groups={groups} setGroups={setGroups} />
         <Route path="/groupsAround" element={<GroupsAround/>} groups={groups} setGroups={setGroups} />
         <Route path="/peopleAround" element={<PeopleAround/>}/>
@@ -67,10 +71,10 @@ useEffect(() => {
         <Route path="/logged/user/:id/messages" element={<Messages/>}/>
         <Route path="/logged/user/:id/messages/conversation" element={<Conversation/>}/>
         <Route path="/:id/new" element={<NewGroup/>}/>
-        <Route path="/group/:id" element={<GroupCard/>} />
+        <Route path="/group/:id" element={<GroupCard/>} group={group} setGroup={setGroup} />
         <Route path="/logged/user/id/profile" element={<UserProfile/>}/>
         <Route path="/group/edit/:id" element={<ModifyGroup/>}/>
-        <Route path="/user/edit" element={<EditUser/>}/>
+        <Route path="/user/edit" element={<EditUser/>} group={group} setGroup={setGroup}/>
       </Route>
      
 

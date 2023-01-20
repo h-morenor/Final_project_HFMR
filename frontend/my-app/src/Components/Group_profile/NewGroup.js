@@ -17,7 +17,7 @@ export default function NewGroup({groups, setGroups}) {
   const [venueLocation, setVenueLocation] = useState(0);
   const [max_people, setMax_people] = useState(0);
   const [category, setCategory] = useState("");
-  const [hashtag, setHashtag] = useState("");
+  const [hashtag, setHashtag] = useState([]);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState();
  
@@ -43,12 +43,30 @@ const updateStatus = (json) =>{
 }
 */
 
+//Tags
+
+const handleTags = (e) => {
+  if(e.key === 'Enter' && e.target.value !== "" ) {
+   // if(e.target.lenght > 0) {
+    e.preventDefault(); 
+    const value = e.target.value
+    setHashtag([...hashtag, value])
+    e.target.value = ""
+    
+ // }
+}}
+//Delete tags
+
+const removeTag = (removed) =>{
+  const newtags = hashtag.filter(tag => tag != removed)
+  setHashtag(newtags)
+}
+
+
 // Formula
 
 const handleNewGroup = async (event) => {
-
     event.preventDefault();
-
     setIsLoading(true);
     setError(null);
 
@@ -57,9 +75,7 @@ const handleNewGroup = async (event) => {
       setError('User not found!');
       return
     }
-
     const group = { selectedImage, title, createdBy, description, max_people, category, hashtag, venueLocation };
-
     const response = await fetch("/api/group/new", {
       method: "POST",
       headers: {
@@ -71,22 +87,19 @@ const handleNewGroup = async (event) => {
 
     const json = await response.json()
     
-
     if (!response.ok) {
       setIsLoading(false);
       setError(json);
       console.log("Error! please rectify")
     }
-
     if (response.ok) {
-      
       setIsLoading(false)
       setError(null);
       console.log(json)
       navigate('/group/:id', {replace: true});
-    }   
-    
+    }       
   };
+
 
 
 
@@ -166,33 +179,29 @@ const handleNewGroup = async (event) => {
     
     <div>
       <label   htmlFor="hashtag"   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"   >     Hashtags   </label>
+      <div className="flex">
+      <div className="flex gap-1z items-center">
+      {hashtag.map((tag, index) => {
+        return (
+        
+          <span key={index} 
+          className="text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1 bg-blue-200 text-blue-700 rounded-full"
+          onClick={() => removeTag(tag)}>{tag}</span>
+          
+        
+        )}  )}
+      </div>
       <input
         type="text"
-        id="hashtag"
-        value={hashtag}
-        onChange={(e) => {     setHashtag(e.target.value);    }}
+        onKeyDown={handleTags} 
+        
         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         placeholder="Add"
-        required=""
       />
+      </div>
     </div>
 
 
-    <div>
-      <label
-        htmlFor="website"
-        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-      >
-        Website URL
-      </label>
-      <input
-        type="url"
-        id="website"
-        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        placeholder="other.com"
-        required=""
-      />
-    </div>
     <div>
         <div>
       <label htmlFor="venueLocation" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -210,6 +219,7 @@ const handleNewGroup = async (event) => {
       <button  onClick={getLocation}   className="p-2 border border-red-400 rounded-md"   >   Get current location      </button>
       </div>
     </div>
+
   </div>
   
   <div>
@@ -264,15 +274,10 @@ const handleNewGroup = async (event) => {
     <div>
     <p>{error}</p>
     </div>
-    )}
-                    
- 
-  
+    )}                   
+   
 </form>
-
 
     </div>
   )
 }
-//if(!error ? (<Navigate replace to="/group/:id"/>)) 
-//{user && (<Navigate replace to="/logged/user/id"/>)}

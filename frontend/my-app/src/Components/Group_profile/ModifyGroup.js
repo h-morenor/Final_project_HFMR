@@ -1,8 +1,9 @@
 import React from 'react'
 import { Auth } from '../../context/Auth';
-import { useContext, useState, useNavigate } from 'react';
+import { useContext, useState, useEffect } from 'react';
+import { useNavigate, useParams } from "react-router-dom";
 
-export default function ModifyGroup({group}) {
+export default function ModifyGroup({group, setGroup}) {
 
   const [title, setTitle] = useState("");
   const [createdBy, setCreatedBy] = useState("");
@@ -14,15 +15,64 @@ export default function ModifyGroup({group}) {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState();
  
- // const navigate = useNavigate();
 
 const {user} = useContext(Auth)
 
-//console.log(groups)
+   [group, setGroup] = useState()
+ const { id } = useParams();
+/*
+  useEffect(() => {
+    setError(null);
+    if (!user) {
+      console.log('user not found!')
+      setError('User not found!');
+      return
+    }
+
+    const findGroup = async () => {
+
+       console.log(id)
+      //console.log(`/api/group/${id}`)
+      const response = await fetch(`/api/group/${id}`, {
+      //method: "GET",
+      headers: {
+        //"Content-Type": "application/json",
+        "Authorization": `Bearer ${user.token}`
+       },
+     }
+     );
+    const json = await response.json();
+    console.log(json)
+    setGroup(json)
+    
+    };
+
+    findGroup();
+  }, [user]);*/
+
+/////////
+
+const updateGroup = async () => {
+
+  const response = await fetch(`/api/group/${id}`, {
+      method: "PATCH",
+      headers: {
+        //"Content-Type": "application/json",
+        "Authorization": `Bearer ${user.token}`
+       },
+     }
+     );
+    const json = await response.json();
+    console.log(json)
+    setGroup(json)
+
+}
+
 
 
   return (
     <div>   
+
 
     <form className="m-10">
     <div className="grid gap-6 mb-6 md:grid-cols-1">
@@ -33,7 +83,7 @@ const {user} = useContext(Auth)
       <input
         type="text"
         id="group_name"
-        value={title}
+        value={group? group.title : title}
         onChange={(e) => {     setTitle(e.target.value);    }}
         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         placeholder="The avengers"
@@ -45,7 +95,7 @@ const {user} = useContext(Auth)
       <input
         type="number"
         id="max_people"
-        value={max_people}
+        value={group? group.max_people : max_people}
         onChange={(e) => {     setMax_people(e.target.value);    }}
         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         placeholder="ie: 20 or no max"
@@ -57,7 +107,7 @@ const {user} = useContext(Auth)
       <input
         type="text"
         id="category"
-        value={category}
+        value={group? group.category : category}
         onChange={(e) => {     setCategory(e.target.value);    }}
         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         placeholder="Select"
@@ -70,7 +120,7 @@ const {user} = useContext(Auth)
       <input
         type="text"
         id="hashtag"
-        value={hashtag}
+        value={group? group.hashtag : hashtag}
         onChange={(e) => {     setHashtag(e.target.value);    }}
         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         placeholder="Add"
@@ -79,21 +129,7 @@ const {user} = useContext(Auth)
     </div>
 
 
-    <div>
-      <label
-        htmlFor="website"
-        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-      >
-        Website URL
-      </label>
-      <input
-        type="url"
-        id="website"
-        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        placeholder="other.com"
-        required=""
-      />
-    </div>
+  
     <div>
         <div>
       <label htmlFor="venueLocation" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -102,7 +138,7 @@ const {user} = useContext(Auth)
       <input
         type="address"
         id="venueLocation"
-        value={venueLocation}
+        value={group? group.venueLocation : venueLocation}
         onChange={(e) => {     setVenueLocation(e.target.value);    }}
         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         placeholder=""
@@ -122,7 +158,7 @@ const {user} = useContext(Auth)
   </label>
   <textarea
     id="description"
-    value={description}
+    value={group? group.description : description}
 
     onChange={(e) => {     setDescription(e.target.value);    }}
     rows={4}
@@ -157,8 +193,9 @@ const {user} = useContext(Auth)
   </div>
   <button 
     className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+  onClick={updateGroup}
   >
-    Submit
+    Update Group
   </button>
    
     {error && (
@@ -177,3 +214,21 @@ const {user} = useContext(Auth)
 
 
 //onClick={handleNewGroup} 
+
+/*
+  <div>
+      <label
+        htmlFor="website"
+        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+      >
+        Website URL
+      </label>
+      <input
+        type="url"
+        id="website"
+        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        placeholder="other.com"
+        required=""
+      />
+    </div>
+*/

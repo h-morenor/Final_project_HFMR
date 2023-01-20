@@ -1,17 +1,13 @@
 import React, { useEffect, useContext } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
-
+import { Navigate, NavLink, useNavigate } from 'react-router-dom'
+import GroupCard from '../Group_profile/GroupCard';
 import { Auth } from '../../context/Auth';
-
-
 
 
 export default function GroupCardList({group, groupId}) {
 
 const navigate = useNavigate();
-
 const {user} = useContext(Auth)
-
 const followers = group.followers;
 
 useEffect(() =>{
@@ -43,15 +39,15 @@ useEffect(() =>{
     </div>
   </div>
 </div>
-
-
     </div>
-
-
-
-
   )
 }
+//{navigate(`/group/${group._id}`)}
 
+/*
+{myGroups.map((group) => {
+          const groupId = group._id
+          return <GroupCardList group={group} key={groupId} />;
+        })}*/
 
 

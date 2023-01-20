@@ -12,7 +12,7 @@ export const useSignup = () => {
     setIsLoading(true);
     setError(null);
 
-    if (password!=passwordConfirm){
+    if (password!==passwordConfirm){
       setIsLoading(false);
       setError("Password confirm not valid")
       return

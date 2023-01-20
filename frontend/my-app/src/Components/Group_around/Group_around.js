@@ -1,26 +1,44 @@
 import React from 'react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import marker from "../../assets/person-fill.svg"
 import L from 'leaflet'
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+import { MapContainer, TileLayer, ZoomControl, Marker, Popup } from 'react-leaflet'
 import { Map, useMap } from "react-leaflet";
+//import { geosearch } from 'esri-leaflet-geocoder'
 //import useLocation2 from '../../hooks/useLocation2'
 //import  useLocation  from "../../hooks/useLocation"
 import { Auth } from '../../context/Auth';
 import { useContext } from 'react'
 import useFetchGroups from '../../hooks/useFetchGroups';
 import GroupInfo from './GroupInfo'
+//import 'esri-leaflet-geocoder/dist/esri-leaflet-geocoder.css'
 
 export default function AccessPage({groups, setGroups}) {
 
  [groups, setGroups] = useFetchGroups()
   const [error, setError] = useState("");
 
+
+
+/////// test find
+
+
+const findAddress = () =>{
+//const fetch = require('node-fetch');
+const requestOptions = {
+  method: 'GET',
+};
+
+fetch("https://api.geoapify.com/v1/geocode/autocomplete?text=Mosco&apiKey=178a21e11be94a9f8f92b2a0221c8ac5", requestOptions)
+  .then(response => response.json())
+  .then(result => console.log(result))
+  .catch(error => console.log('error', error));
+}
+
 /////
 
 const {user} = useContext(Auth)
-  
-  const [location, setLocation] = useState([])
+const [location, setLocation] = useState([])
 
 
   useEffect(() => {
@@ -44,17 +62,34 @@ const {user} = useContext(Auth)
 
       }else{
       console.log("Browser does not support geolocation")}
-     
 }
-
     FetchLocation();
   }, [user]);
 
-
-
 //////
+const mapRef = useRef();
+useEffect(() => {
+  console.log("hola F")
+  const {current = {}} = mapRef;
+  
+ //const {leafletElement: map} = current;
+ console.log(mapRef)
+  /*if (!map) return;
 
- 
+map.locate({
+  setView:true
+});
+
+const control = geosearch();
+control.addTo(map)
+
+control.on('results', handleOnSearch)*/
+
+},[mapRef]);
+
+function handleOnSearch(data){
+  console.log("Search results", data)
+}
   
  // [location, setLocation] = useLocation();
   console.log("info")
@@ -98,12 +133,12 @@ console.log("example:")
 
 */
 
-const loc = [51.503, -0.09]
+const loc = [51.505, -0.1]
 
   return (
     <div>
       <div id="map" >
-      <MapContainer center={loc} zoom={15} scrollWheelZoom={true}>
+      <MapContainer ref={mapRef} center={loc} zoom={15} scrollWheelZoom={true} ZoomControl={false}>
         <View center={loc} />
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

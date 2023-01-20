@@ -39,6 +39,9 @@ const icon = new L.icon({
 const lat = 37.38605
 const lng = -122.08385
 
+const lat2 = 54.5856
+const lng2 = -1.3173
+
   return (
     <div>
       <div id="map" >
