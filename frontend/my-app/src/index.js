@@ -8,7 +8,7 @@ import { DataProvider } from './context/DataContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
+ // <React.StrictMode>
     <BrowserRouter>
       <AuthProvider>
         <DataProvider>
@@ -16,7 +16,7 @@ root.render(
         </DataProvider>
       </AuthProvider>
     </BrowserRouter>
-  </React.StrictMode>
+ // </React.StrictMode>
 );
 
 /*

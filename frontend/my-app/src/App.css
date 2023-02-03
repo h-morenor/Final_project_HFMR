@@ -4,7 +4,7 @@ body {
 
 .leaflet-container {
   width: 100vw;
-  height: 80vh;
+  height: 70vh;
 }
 
 .App {
@@ -23,14 +23,33 @@ body {
   position: relative;
 }
 
+/*bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500*/
 .autocomplete-container input {
-  width: calc(100% - 43px);
+  width: 50%;
   outline: none;
 
   border: 1px solid rgba(0, 0, 0, 0.2);
   padding: 10px;
   padding-right: 31px;
   font-size: 16px;
+  background-color: rgb(249 250 251);
+}
+
+.geocoder-container {
+}
+.geocoder-container input {
+  display: block;
+  padding: 0.625rem;
+  background-color: #f9fafb;
+  color: #111827;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  width: 100%;
+  border-radius: 0.5rem;
+  border-width: 1px;
+  border-color: #d1d5db;
+}
+.geocoder-container div {
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -63,6 +82,7 @@ body {
   }
 }
 
+/*
 .geocoder-control-input {
   background-image: url("https://raw.githubusercontent.com/Esri/esri-leaflet-geocoder/master/src/img/search.png");
-}
+}*/

@@ -1,21 +1,37 @@
-import React, { useEffect, useContext } from 'react'
+import React, { useEffect, useContext, useState } from 'react'
 import { Navigate, NavLink, useNavigate } from 'react-router-dom'
 import GroupCard from '../Group_profile/GroupCard';
 import { Auth } from '../../context/Auth';
 
 
-export default function GroupCardList({group, groupId}) {
+export default function GroupCardList({group, groupId, loading}) {
+
 
 const navigate = useNavigate();
 const {user} = useContext(Auth)
 const followers = group.followers;
+const [existinGroup, setExistinGroup] = useState(false);
+
+console.log(followers)
+
+
 
 useEffect(() =>{
-  
-})
+  const existing = followers.forEach((follower) => {
+      console.log("ownership")
+      
+      console.log(follower)
+      console.log(user.userId)
+
+      //let groupId = group._id
+      if (follower === user.userId) {
+        setExistinGroup(true);
+      }
+    });
+},[])
 
   return (
-    <div>
+    <div className="gap-2">
     <div onClick={() => {navigate(`/group/${group._id}`)}} className="flex flex-col items-center bg-white border rounded-lg shadow-md md:flex-row hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
       
   <img
@@ -27,7 +43,9 @@ useEffect(() =>{
     <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
       {group.title}
     </h5>
-    {(user.userId=group.createdBy) && ( <div><span className="text-xs inline-block py-1 px-2.5 leading-none text-center whitespace-nowrap align-baseline font-bold bg-green-500 text-white rounded-full">Group owner</span> </div>  )}
+    {(user.userId===group.createdBy) && ( <div><span className="text-xs inline-block py-1 px-2.5 leading-none text-center whitespace-nowrap align-baseline font-bold bg-green-500 text-white rounded-full">Group owner</span> </div>  )}
+    {(user.userId!==group.createdBy && existinGroup===true) && ( <div><span className="text-xs inline-block py-1 px-2.5 leading-none text-center whitespace-nowrap align-baseline font-bold bg-blue-500 text-white rounded-full">Group follower</span>   </div>  )}
+
     <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
       {group.description}
     </p>
@@ -51,3 +69,21 @@ useEffect(() =>{
         })}*/
 
 
+//import React from 'react';
+
+//const Groups = ({ groups, loading }) => {
+  
+/*
+
+  return (
+    <ul className='list-group mb-4'>
+      {groups.map(group => (
+        <li key={group.id} className='list-group-item'>
+          {group.title}
+        </li>
+      ))}
+    </ul>
+  );
+};
+*/
+//export default Groups;

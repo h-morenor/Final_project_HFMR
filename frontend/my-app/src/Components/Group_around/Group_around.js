@@ -1,115 +1,168 @@
-import React from 'react'
-import { useState, useEffect, useRef } from 'react'
-import marker from "../../assets/person-fill.svg"
-import L from 'leaflet'
-import { MapContainer, TileLayer, ZoomControl, Marker, Popup } from 'react-leaflet'
+import React from "react";
+import { useState, useEffect, useRef } from "react";
+import marker from "../../assets/person-fill.svg";
+import L from "leaflet";
+import { MapContainer, TileLayer, ZoomControl, Marker, Popup} from "react-leaflet";
 import { Map, useMap } from "react-leaflet";
-//import { geosearch } from 'esri-leaflet-geocoder'
-//import useLocation2 from '../../hooks/useLocation2'
-//import  useLocation  from "../../hooks/useLocation"
-import { Auth } from '../../context/Auth';
-import { useContext } from 'react'
-import useFetchGroups from '../../hooks/useFetchGroups';
-import GroupInfo from './GroupInfo'
-//import 'esri-leaflet-geocoder/dist/esri-leaflet-geocoder.css'
+import { Auth } from "../../context/Auth";
+import { useContext } from "react";
+import useFetchGroups from "../../hooks/useFetchGroups";
+import GroupInfo from "./GroupInfo";
+import { useGeolocated } from "react-geolocated";
+import useGeoLocation from "../../hooks/useFindLocation"
+import useFindLocation from "../../hooks/useFindLocation"
+//import useFindLocation from "react-router-dom";
 
-export default function AccessPage({groups, setGroups}) {
 
- [groups, setGroups] = useFetchGroups()
+export default function AccessPage({ groups, setGroups}) {
+
+  console.log("component render")
+
+  //, lat, setLat, long, setLong, location, setLocation 
+
+  const [filterTitle, setFilterTitle] = useState("");
+  [groups, setGroups] = useFetchGroups();
   const [error, setError] = useState("");
+  const { user } = useContext(Auth);
+  const [groupsFiltered, setGroupsFiltered] = useFetchGroups()
+  const [location, setLocation] = useState([51.505, -0.1])
+  console.log(location)
+
+  const [errorLocation, setErrorLocation] = useState()
 
 
+//Filters
+const handleFilters = (e) => {
+  if(e.key === 'Enter' && e.target.value !== "" ) {
+   // if(e.target.lenght > 0) {
+    console.log("input")
+    e.preventDefault(); 
+    const value = e.target.value
+    setFilterTitle(value.toUpperCase())
+    e.target.value = ""  
+}}
 
-/////// test find
+//Modify filter every time it changes
+useEffect(()=>{
+console.log("hello")
 
+if(filterTitle===""){
+  setGroupsFiltered(groups)
+    }else{
+      const filteredGroupsArray = groups.filter((group) => {
+      const groupt =  group.title.toUpperCase()
+      return groupt.search(filterTitle) !== -1
+      })
+      setGroupsFiltered(filteredGroupsArray)
+    }
 
-const findAddress = () =>{
-//const fetch = require('node-fetch');
-const requestOptions = {
-  method: 'GET',
-};
+},[filterTitle])
 
-fetch("https://api.geoapify.com/v1/geocode/autocomplete?text=Mosco&apiKey=178a21e11be94a9f8f92b2a0221c8ac5", requestOptions)
-  .then(response => response.json())
-  .then(result => console.log(result))
-  .catch(error => console.log('error', error));
+//Delete tags
+const removeFilters = () =>{
+  setFilterTitle("")
 }
 
-/////
+///////////////////////////////////////////////////
 
-const {user} = useContext(Auth)
-const [location, setLocation] = useState([])
+//Location
 
+
+
+const getLocation = () => {
+      if(navigator.geolocation)  {
+      navigator.geolocation.getCurrentPosition ((position) => {
+      //  console.log(position.coords)
+      //getaddress(position.coords.latitude, position.coords.longitude)
+      //
+      //console.log(position.coords.latitude)
+      //console.log(position.coords.longitude)
+      console.log([position.coords.latitude, position.coords.longitude])
+      setLocation([position.coords.latitude, position.coords.longitude])
+      setErrorLocation(null)
+      });
+      }else{
+      console.log("Browser does not support geolocation")
+      setErrorLocation(errorLocation);
+      }
+       
+  }
+
+  useEffect(()=>{
+       getLocation()
+       
+  },[])
+     
+  /*
+ const showposition = async() => {
+  await 
+ }
+  useEffect(()=>{
+        
+        showposition()
+  },[])
+     
+*/
+
+
+//console.log(lat, setLat, long, setLong)
+
+
+
+/*
+  const { coords, isGeolocationAvailable, isGeolocationEnabled } =
+    useGeolocated({
+      positionOptions: {
+        enableHighAccuracy: false,
+      },
+      userDecisionTimeout: 1000,
+    });
 
   useEffect(() => {
     setError(null);
     if (!user) {
-      console.log('user not found!')
-      setError('User not found!');
-      return
+      console.log("user not found!");
+      setError("User not found!");
+      return;
+    }
+    
+
+    if(!isGeolocationAvailable) {
+      console.log("Location not available")
+      console.log("Coords", coords)
+      setError("Location not available");
     }
 
-    const FetchLocation = () => {
+    if(!isGeolocationEnabled) {
+      console.log('Geolocation not enabled')
+      setError("Location not available");
+    }
+    console.log('latitud', )
+    return console.log('coords', coords)
+    
+  }, []);
+*/
 
-     if(navigator.geolocation)  {
-      const json = navigator.geolocation.getCurrentPosition
-      (position=> {
-      //getaddress(position.coords.latitude, position.coords.longitude)
-      setLocation([position.coords.latitude, position.coords.longitude])
-      //console.log(position.coords.latitude)
-      //console.log(position.coords.longitude)
-      });
+    // const FetchLocation = () => {
+    //   if (navigator.geolocation) {
+    //     const json = navigator.geolocation.getCurrentPosition((position) => {
+    //       //getaddress(position.coords.latitude, position.coords.longitude)
+    //       setLocation([position.coords.latitude, position.coords.longitude]);
+    //       //console.log(position.coords.latitude)
+    //       //console.log(position.coords.longitude)
+    //     });
+    //   } else {
+    //     console.log("Browser does not support geolocation");
+    //   }
+    // };
+    // FetchLocation();
 
-      }else{
-      console.log("Browser does not support geolocation")}
-}
-    FetchLocation();
-  }, [user]);
-
-//////
-const mapRef = useRef();
-useEffect(() => {
-  console.log("hola F")
-  const {current = {}} = mapRef;
+  //////
   
- //const {leafletElement: map} = current;
- console.log(mapRef)
-  /*if (!map) return;
-
-map.locate({
-  setView:true
-});
-
-const control = geosearch();
-control.addTo(map)
-
-control.on('results', handleOnSearch)*/
-
-},[mapRef]);
-
-function handleOnSearch(data){
-  console.log("Search results", data)
-}
-  
- // [location, setLocation] = useLocation();
-  console.log("info")
-  console.log(location)
 
 
-  function View({ center }) {
-  const map = useMap()
-  map.setView(center)
-  return null
-}
 
-const icon = new L.icon({
-    iconUrl: marker,
-    iconRetinaUrl: marker,
-    popupAnchor: [-0, -0],
-    iconSize: [46, 56]
-  })
-
-    /*
+  /*
     const show = () => {
 
         groups.map(group => {   
@@ -118,11 +171,11 @@ const icon = new L.icon({
         }
     )}
     show()*/
-/*
+  /*
 const lat = 37.38605
 const lng = -122.08385*/
 
-/*
+  /*
 const lat = location[0]
 const lng = location[1]
 
@@ -132,41 +185,103 @@ console.log("example:")
 51.505, -0.09
 
 */
+//console.log({coords})
+//console.log(GeolocationCoordinates.latitude)
 
-const loc = [51.505, -0.1]
+/*
+useEffect( ()=>{
+navigator.geolocation.getCurrentPosition(async (position) => {
+ console.log(position.coords.latitude, position.coords.longitude);
+ setLocation([position.coords.latitude, position.coords.longitude]);
+})}, [])
+
+console.log(location)
+
+*/
+
+
+
+ function View({ center }) {
+    const map = useMap();
+    map.setView(center);
+    return null;
+  }
+
+  const icon = new L.icon({
+    iconUrl: marker,
+    iconRetinaUrl: marker,
+    popupAnchor: [-0, -0],
+    iconSize: [46, 56],
+  });
+
+
+  const loc = [51.505, -0.1];
 
   return (
-    <div>
-      <div id="map" >
-      <MapContainer ref={mapRef} center={loc} zoom={15} scrollWheelZoom={true} ZoomControl={false}>
-        <View center={loc} />
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
+    <div >
+      <div id="map">
 
-      <Marker position={loc}><Popup position={loc}></Popup></Marker> 
-      
+      <div className="flex gap-1z items-center m-1">
+        <input
+          type="text"
+          onKeyDown={handleFilters}         
+          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-50 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          placeholder="Filter by group title"
+        />
 
-      {  groups.map(group => (   
+        <div >
+          {(filterTitle !=="") &&
+              <span 
+              className="text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1 bg-blue-200 text-blue-700 rounded-full"
+              onClick={() => removeFilters()}>{filterTitle}
+              </span>       
+          }
+        </div>
+      </div>
         
-        <Marker key={group.id} position={[group.venueLocation[0].split(", ")[0], group.venueLocation[0].split(", ")[1]]}>
-          <Popup position={[group.venueLocation[0].split(", ")[0], group.venueLocation[0].split(", ")[1]]}>
-            <div>
-               <GroupInfo group={group} key={group._id} />
-              
-            </div>
-          </Popup>
-          
-        </Marker>     
-        ))}
+        <MapContainer
+          center={location}
+          zoom={15}
+          scrollWheelZoom={true}
+          ZoomControl={false}
+        >
 
-      </MapContainer>
-            
+          <View center={location} />
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          <Marker position={location}>
+            <Popup position={location}></Popup>
+          </Marker>
+
+          {
+                    
+          groupsFiltered.map((group) => (
+            <Marker
+              key={group.id}
+              position={[
+                group.venueLocation[0].split(" ")[0],
+                group.venueLocation[0].split(" ")[1],
+              ]}
+            >
+              <Popup
+                position={[
+                  group.venueLocation[0].split(" ")[0],
+                  group.venueLocation[0].split(" ")[1],
+                ]}
+              >
+                <div>
+                  <GroupInfo group={group} key={group._id} />
+                </div>
+              </Popup>
+            </Marker>
+          ))
+          }
+        </MapContainer>
+      </div>
     </div>
-    
-    </div>
-  )
+  );
 }
 
 /*

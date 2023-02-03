@@ -1,4 +1,4 @@
-
+/*
 import React from 'react'
 import marker from "../assets/person-fill.svg"
 import L from 'leaflet'
@@ -26,17 +26,17 @@ const icon = new L.icon({
     setLong(data.location.lng)*/
 
     
-    const show = () => {
-        usersData.map(user => {   
-            console.log("hola")
-            console.log(user.address.geo.lat)
-            console.log( user.address.geo.lng)
-        }
-    )}
+    // const show = () => {
+    //     usersData.map(user => {   
+    //         console.log("hola")
+    //         console.log(user.address.geo.lat)
+    //         console.log( user.address.geo.lng)
+    //     }
+    // )}
 
-    show()
+    // show()
 
-
+/*
 const lat = 37.38605
 const lng = -122.08385
 

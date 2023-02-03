@@ -4,12 +4,11 @@ const Schema = mongoose.Schema;
 
 const GroupSchema = new Schema(
   {
-    selectedImage:
+   /* profileImg:
     {
-        data: Buffer,
-        contentType: String,
+        type: String,
         required: false,
-    },
+    },*/
     title: {
       type: String,
       required: true,
@@ -44,6 +43,11 @@ const GroupSchema = new Schema(
     venueLocation: // TODO-Moe: Use string then string.slice('')
     {
         type: Array,
+        required: false,
+    },
+    address: 
+    {
+        type: String,
         required: false,
     },
     admins: {

@@ -1,12 +1,14 @@
 //import logo from './logo.svg';
 import {Route, Routes, Navigate} from 'react-router-dom'; 
+//import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
+import FilesUploadComponent from './Components/files-upload-component';
 import './App.css';
 
 import Login from "./Components/Start/Login"
 import Signup from "./Components/Start/Signup"
 import LayoutHome from "./Components/Start/LayoutHome"
 import LayoutApp from "./Components/LayoutApp"
-import AccessPage from './Components/AccessPage';
+//import AccessPage from './Components/AccessPage';
 import UserProfile from './Components/User_profile/UserProfile';
 import {useLogout} from "../src/hooks/useLogout"
 import Messages from "./Components/Dialogues/Messages_list"
@@ -24,7 +26,7 @@ import GroupCard from './Components/Group_profile/GroupCard';
 //import useFetchGroups from './hooks/useFetchGroups';
 import { DataContext } from './context/DataContext';
 
-import { useLocation } from './hooks/useLocation';
+//import { useLocation } from './hooks/useLocation';
 import EditUser from './Components/User_profile/EditUser';
 import ModifyGroup from './Components/Group_profile/ModifyGroup';
 
@@ -35,13 +37,10 @@ function App() {
   const [groups, setGroups] = useState([]);
   const [group, setGroup] = useState();
 
-
-  const [location, setLocation] = useState([]);
-
+ // const [location, setLocation] = useState([]);
   const { logout } = useLogout();
   
- const {getLocation} = useLocation();
-    
+/* const {getLocation} = useLocation();
 
 useEffect(() => {
   if (user) {
@@ -65,7 +64,7 @@ useEffect(() => {
       </Route>
       <Route element={user ? ( <LayoutApp/> ) : (  <Navigate to="/login"/>)} groups={groups} setGroups={setGroups} >
         <Route path="/logged/user/:id" element={<GroupsAround/>} groups={groups} setGroups={setGroups} />
-        <Route path="/groupsAround" element={<GroupsAround/>} groups={groups} setGroups={setGroups} />
+        <Route path="/groupsAround" element={<GroupsAround/>}  groups={groups} setGroups={setGroups} />
         <Route path="/peopleAround" element={<PeopleAround/>}/>
         <Route path="/mygroups" element={<MyGroups/>} />
         <Route path="/logged/user/:id/messages" element={<Messages/>}/>
@@ -73,7 +72,7 @@ useEffect(() => {
         <Route path="/:id/new" element={<NewGroup/>}/>
         <Route path="/group/:id" element={<GroupCard/>} group={group} setGroup={setGroup} />
         <Route path="/logged/user/id/profile" element={<UserProfile/>}/>
-        <Route path="/group/edit/:id" element={<ModifyGroup/>}/>
+        <Route path="/group/edit/:id" element={<ModifyGroup/>} group={group} setGroup={setGroup}/>
         <Route path="/user/edit" element={<EditUser/>} group={group} setGroup={setGroup}/>
       </Route>
      

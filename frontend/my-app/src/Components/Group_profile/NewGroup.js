@@ -1,10 +1,19 @@
 import React, { useContext, useState } from "react";
 import { useNavigate} from 'react-router-dom';
-import { useLocation } from "../../hooks/useLocation"
+import { useLocation } from "../../hooks/useFindLocation"
 //import useNewGroup from "../../hooks/useNewGroup";
 import { Auth } from "../../context/Auth";
 import { Navigate } from "react-router-dom";
 import MyGroups from "../myGroups/MyGroups";
+import axios from "axios"
+
+import FilesUploadComponent from '../files-upload-component';
+
+import { GeoapifyGeocoderAutocomplete, GeoapifyContext } from '@geoapify/react-geocoder-autocomplete'
+import '@geoapify/geocoder-autocomplete/styles/round-borders.css'
+import { GeocoderAutocomplete } from '@geoapify/geocoder-autocomplete';
+
+
 
 export default function NewGroup({groups, setGroups}) {
 
@@ -15,25 +24,23 @@ export default function NewGroup({groups, setGroups}) {
   const [createdBy, setCreatedBy] = useState("");
   const [description, setDescription] = useState();
   const [venueLocation, setVenueLocation] = useState(0);
+  const [address, setAddress] = useState("51.505 -0.1");
   const [max_people, setMax_people] = useState(0);
   const [category, setCategory] = useState("");
   const [hashtag, setHashtag] = useState([]);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState();
+  const [selectedImage, setSelectedImage] = useState(null);
  
   const navigate = useNavigate();
 
 const {user} = useContext(Auth)
 
-console.log(groups)
-//const handleNewGroup = async () => { await newGroup(user);};
 
-
-const {errorLocation, getLocation} = useLocation();
-const handleLocation = async () => { getLocation()}
+//const {errorLocation, getLocation} = useLocation();
+//const handleLocation = async () => { getLocation()}
 
 //const UploadAndDisplayImage = () => {
-  const [selectedImage, setSelectedImage] = useState(null);
 
 // change state
 
@@ -43,8 +50,8 @@ const updateStatus = (json) =>{
 }
 */
 
-//Tags
 
+//Tags
 const handleTags = (e) => {
   if(e.key === 'Enter' && e.target.value !== "" ) {
    // if(e.target.lenght > 0) {
@@ -55,13 +62,31 @@ const handleTags = (e) => {
     
  // }
 }}
-//Delete tags
 
+//Delete tags
 const removeTag = (removed) =>{
   const newtags = hashtag.filter(tag => tag != removed)
   setHashtag(newtags)
 }
 
+// Adress geocoding
+function onPlaceSelect(value) {
+    console.log(value);
+    console.log("selected")
+    console.log(value.properties);
+
+    setAddress(value.properties.formatted)
+    console.log(value.properties.formatted)
+    //console.log(value.properties.address_line2)
+    setVenueLocation(`${value.properties.lat} ${value.properties.lon}`)
+    console.log(`${value.properties.lat} ${value.properties.lon}`)
+
+  }
+ 
+  function onSuggectionChange(value) {
+    console.log(value);
+    
+  }
 
 // Formula
 
@@ -75,7 +100,9 @@ const handleNewGroup = async (event) => {
       setError('User not found!');
       return
     }
-    const group = { selectedImage, title, createdBy, description, max_people, category, hashtag, venueLocation };
+    
+    const group = { selectedImage, title, createdBy, description, address, max_people, category, hashtag, venueLocation };
+
     const response = await fetch("/api/group/new", {
       method: "POST",
       headers: {
@@ -91,16 +118,44 @@ const handleNewGroup = async (event) => {
       setIsLoading(false);
       setError(json);
       console.log("Error! please rectify")
+      throw(error)
     }
     if (response.ok) {
       setIsLoading(false)
       setError(null);
       console.log(json)
-      navigate('/group/:id', {replace: true});
+
+      navigate(`/group/${json._id}`, {replace: true});
     }       
   };
 
+ // Experiment
 
+//  const handleImageChange = (event) => {
+//   setSelectedImage(event.target.files[0]);
+// };
+
+//  const handleSubmit = (event) => {
+//   event.preventDefault();
+//   const formData = new FormData();
+//   formData.append('image', selectedImage);
+//   formData.append('title', title);
+//   formData.append('venueLocation', venueLocation);
+//   formData.append('description', description);
+//   formData.append('address', address);
+//   formData.append('category', category);
+//   formData.append('hashtag', hashtag);
+  
+//   axios.post('/upload', formData)
+//     .then(res => {
+//       console.log(res.data);
+//     })
+//     .catch(err => {
+//       console.error(err);
+//     });
+// };
+
+///////// End of Experiment
 
 
 /*
@@ -133,15 +188,27 @@ const handleNewGroup = async (event) => {
 
   return (
     <div>
-       
+      
    
 
-<form className="m-10">
-  <div className="grid gap-6 mb-6 md:grid-cols-1">
-     
+<form className="m-20 w-6/12">
+  <div className="grid gap-3 md:grid-cols-1">
+
+     <div>
+     <div className="container">
+                <div className="row">
+                    <form>
+                        <h3>React File Upload</h3>
+                        <div className="form-group">
+                            <input type="file" onChange={handleImageChange} />
+                        </div>
+                    </form>
+                </div>
+            </div>
+   </div> 
     
     <div>
-      <label      htmlFor="group_name"     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"   >    Group name    </label>
+      <label      htmlFor="group_name"     className="block mb-2 text-sm font-medium text-gray-900 text-white"   >    Group name    </label>
       <input
         type="text"
         id="group_name"
@@ -153,7 +220,7 @@ const handleNewGroup = async (event) => {
       />
     </div>
     <div>
-      <label    htmlFor="max_people"    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"   >    Max people    </label>
+      <label    htmlFor="max_people"    className="block mb-2 text-sm font-medium text-gray-900 text-white"   >    Max people    </label>
       <input
         type="number"
         id="max_people"
@@ -165,7 +232,7 @@ const handleNewGroup = async (event) => {
       />
     </div>
     <div>
-      <label   htmlFor="category"   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"   >     Category   </label>
+      <label   htmlFor="category"   className="block mb-2 text-sm font-medium text-gray-900 text-white"   >     Category   </label>
       <input
         type="text"
         id="category"
@@ -178,7 +245,7 @@ const handleNewGroup = async (event) => {
     </div>
     
     <div>
-      <label   htmlFor="hashtag"   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"   >     Hashtags   </label>
+      <label   htmlFor="hashtag"   className="block mb-2 text-sm font-medium text-gray-900 text-white"   >     Hashtags   </label>
       <div className="flex">
       <div className="flex gap-1z items-center">
       {hashtag.map((tag, index) => {
@@ -195,14 +262,50 @@ const handleNewGroup = async (event) => {
         type="text"
         onKeyDown={handleTags} 
         
-        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         placeholder="Add"
       />
       </div>
     </div>
 
 
-    <div>
+<div>
+  <label
+    htmlFor="Venue address"
+    className="block mb-2 text-sm font-medium text-gray-900 text-white" >
+    Venue address
+  </label>
+  <div >
+    <GeoapifyContext apiKey="178a21e11be94a9f8f92b2a0221c8ac5" >
+      <GeoapifyGeocoderAutocomplete placeholder="Enter address of the venue here" required="yes"
+        
+        placeSelect={onPlaceSelect}
+        suggestionsChange={onSuggectionChange}
+        />
+    </GeoapifyContext>
+  </div>
+    </div>
+
+  <div>
+  <label
+    htmlFor="description"
+    className="block mb-2 text-sm font-medium text-gray-900 text-white"
+  >
+    Group description
+  </label>
+  <textarea
+    id="description"
+    value={description}
+
+    onChange={(e) => {     setDescription(e.target.value);    }}
+    rows={4}
+    className="block p-2.5 w-full h-10 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+    placeholder="Write your thoughts here..."
+    defaultValue={""}
+    />
+    </div>
+
+    {/* <div>
         <div>
       <label htmlFor="venueLocation" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
         Venue location
@@ -216,30 +319,13 @@ const handleNewGroup = async (event) => {
         placeholder=""
         required=""
       />
-      <button  onClick={getLocation}   className="p-2 border border-red-400 rounded-md"   >   Get current location      </button>
+      <button     className="p-2 border border-red-400 rounded-md"   >   Get current location      </button>
       </div>
-    </div>
+    </div> */}
 
   </div>
   
-  <div>
-  <label
-    htmlFor="description"
-    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-  >
-    Group description
-  </label>
-  <textarea
-    id="description"
-    value={description}
-
-    onChange={(e) => {     setDescription(e.target.value);    }}
-    rows={4}
-    className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-    placeholder="Write your thoughts here..."
-    defaultValue={""}
-    />
-    </div>
+  
 
   
   
@@ -255,17 +341,19 @@ const handleNewGroup = async (event) => {
     </div>
     <label
       htmlFor="remember"
-      className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+      className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300 text-white"
     >
       I agree with the{" "}
-      <a href="#" className="text-blue-600 hover:underline dark:text-blue-500">
+      <a href="#" className="text-blue-600 hover:underline text-blue-500">
         terms and conditions
       </a>
       .
     </label>
   </div>
-  <button onClick={handleNewGroup} 
-    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+
+    {/* We changed this from handleNewGroup to handleSubmit */}
+  <button onClick={handleSubmit} 
+    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 border-white"
   >
     Submit
   </button>

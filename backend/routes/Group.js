@@ -1,4 +1,11 @@
-const express = require("express");
+ const express = require("express");
+
+let 
+    multer = require('multer'),
+    mongoose = require('mongoose'),
+    uuidv4 = require('uuid/v4');
+    
+
 const {
   createGroup,
   getGroups,
@@ -12,11 +19,29 @@ const {
   
 } = require("../controllers/Group");
 
+
 const AuthMiddleware = require("../middlewares/Auth");
 
 const router = express.Router();
 
 const Group = require("../models/Group");
+
+//////////////////
+/////
+
+
+/*var corsOptions = {
+  origin: "http://localhost:3000",
+  optionsSuccessStatus: 200,
+}
+
+app.use(cors(corsOptions))*/
+
+
+
+
+//////////////
+////////////////
 
 router.use(AuthMiddleware);
 
@@ -28,6 +53,10 @@ router.get("/mygroups", getMyGroups2);
 
 // GET a single group by it's ID
 router.get("/:id", getGroup);
+
+/*
+// POST Create a new group MODIFIED
+router.post("/new", /*upload.single('profileImg'), createGroup);*/
 
 // POST Create a new group
 router.post("/new", createGroup);

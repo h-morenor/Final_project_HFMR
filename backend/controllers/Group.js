@@ -41,19 +41,34 @@ const getAndCheckOwnership = async (id, user_id) => {
 };
 */
 
-//1. Create a group // TODO-Moe: Create Category model
-const createGroup = async (req, res) => {
-  const { title, category, venueLocation, hashtag, description } = req.body;
+/*
+*/
+
+
+
+
+//1. Create a group MODIFIED // TODO-Moe: Create Category model 
+/*
+const createGroup = async (req, res, filename, next) => {
+
+
+
+ const url = req.protocol + '://' + req.get('host')
+ const profileImg = url + '/public/' + req.file.filename
+
+  const { title, category, venueLocation, address, hashtag, description  } = req.body;
 
   //add to a database
   try {
     const group = await Group.create({
+      profileImg,
       title,
       createdBy: req.user._id,
       category,
       venueLocation,
+      address,
       hashtag,
-      description,
+      description,      
       subcribers: [req.user._id], //Hint: We can count this and get number of followers
     });
 
@@ -70,6 +85,40 @@ const createGroup = async (req, res) => {
     res.status(400).json(error.message);
   }
 };
+*/
+
+//1. Create a group ORIGINAL
+
+const createGroup = async (req, res) => {
+  const { title, category, venueLocation, address, hashtag, description  } = req.body;
+
+  //add to a database
+  try {
+    const group = await Group.create({
+      title,
+      createdBy: req.user._id,
+      category,
+      venueLocation,
+      address,
+      hashtag,
+      description,      
+      subcribers: [req.user._id], //Hint: We can count this and get number of followers
+    });
+
+    group.followers.push(req.user._id);
+    group.save();
+
+    const user = await User.findById(req.user._id);
+    user.myGroups.push(group._id);
+    user.save();
+
+    res.status(201).json(group);
+  } catch (error) {
+    res.status(400).json({ error: true, message: error.message });
+    res.status(400).json(error.message);
+  }
+};
+
 
 //2. Display all groups
 const getGroups = async (req, res) => {
@@ -285,6 +334,7 @@ const findUserDeleteFollower = async (followerId, groupId, user, res) => {
 //8. Delete group
 const deleteGroup = async (req, res) => {
   const { id } = req.params;
+  
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({ error: "Group not found!" });
   }
@@ -297,6 +347,7 @@ const deleteGroup = async (req, res) => {
     const response = await Group.findById({ id }.id);
     const groupId = await response._id; //group id new ObjectId("6394a1567bc1499fda059fd4")
     const userId = req.user._id; //user req id
+   
 
     if (!response) {
       return res.status(404).json({ error: "Group not found!" });
@@ -314,13 +365,17 @@ const deleteGroup = async (req, res) => {
 
     //Find followers array from groups to delete
     const group = await Group.findById(groupId);
+    //console.log("t1");
+    //console.log(group);
     const followers = group.followers;
-    console.log(followers);
+    //console.log("t2");
+    //console.log(followers);
 
     const resp = await followers.forEach((follower) => {
       try {
-        console.log(follower.id);
-        const user = findUserDeleteFollower(follower.id, groupId);
+        console.log("t3");
+        console.log(follower);
+        const user = findUserDeleteFollower(follower, groupId);
       } catch (error) {
         throw new Error(error.message);
       }

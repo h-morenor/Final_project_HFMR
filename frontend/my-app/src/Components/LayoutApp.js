@@ -7,7 +7,7 @@ import Publicity from "./Publicity"
 
 export default function LayoutApp() {
   return (
-    <div className="flex flex-col h-screen justify-between">
+    <div className="flex flex-col h-screen justify-between bg-cyan-800">
         <Header/>
         <Outlet/>
         <Footer/>

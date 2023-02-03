@@ -1,4 +1,4 @@
-import { useMap } from 'react-leaflet'
+/*import { useMap } from 'react-leaflet'
 
 function View({ center }) {
   const map = useMap()
@@ -6,4 +6,4 @@ function View({ center }) {
   return null
 }
 
-export default View;
+export default View;*/
