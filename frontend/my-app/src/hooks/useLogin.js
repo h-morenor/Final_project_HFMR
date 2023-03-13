@@ -1,11 +1,10 @@
 import { useContext, useState } from "react";
-import { Auth } from "../context/Auth"
+import { Auth } from "../context/Auth";
 
 export const useLogin = () => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  
   const { dispatch } = useContext(Auth);
 
   const login = async (email, password) => {
@@ -19,7 +18,7 @@ export const useLogin = () => {
     });
 
     const json = await response.json();
-    console.log(response)
+    console.log(response);
 
     if (!response.ok) {
       setIsLoading(false);
@@ -28,13 +27,11 @@ export const useLogin = () => {
     if (response.ok) {
       // Save the user and token in the localstorage
       localStorage.setItem("user", JSON.stringify(json));
-    
+
       // Updating the global Auth context
-      dispatch({type: 'LOGIN', payload: json})
+      dispatch({ type: "LOGIN", payload: json });
 
-      setIsLoading(false)
-
-  
+      setIsLoading(false);
     }
   };
 

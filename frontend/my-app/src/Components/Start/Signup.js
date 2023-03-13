@@ -38,7 +38,7 @@ export default function Signup() {
                         <span className="label-text">Password</span>
                     </label>
                     <input 
-                        type="text" 
+                        type="password" 
                         placeholder="password" 
                         value={password}    
                         onChange={(e) => {setPassword(e.target.value);}} 
@@ -49,7 +49,7 @@ export default function Signup() {
                         <span className="label-text">Confirm Password</span>
                     </label>
                     <input 
-                        type="text" 
+                        type="password" 
                         placeholder="Confirm password" 
                         value={passwordConfirm}  
                         onChange={(e) => {setPasswordConfirm(e.target.value);}} 

@@ -15,10 +15,6 @@ export default function Login() {
 
   const handleLogin = async () => {  await login(email, password);  };
 
-  //const {errorLocation, getLocation} = useLocation();
-
-  //  const handleLocation = async () => { getLocation()}
-
 
   return ( 
     <div>
@@ -34,7 +30,7 @@ export default function Login() {
                     <label className="label">
                         <span className="label-text">Password</span>
                     </label>
-                    <input type="text" placeholder="password" value={password}    onChange={(e) => {     setPassword(e.target.value);    }} className="input input-bordered" />
+                    <input type="password" placeholder="password" value={password}    onChange={(e) => {     setPassword(e.target.value);    }} className="input input-bordered" />
                     
                     <label className="label">
                         <a href="#" className="label-text-alt link link-hover">Forgot password?</a>

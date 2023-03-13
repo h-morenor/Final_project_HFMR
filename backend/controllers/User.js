@@ -1,11 +1,12 @@
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
+const Post = require("../models/Post");
 
 const generateToken = (_id) => {
   return jwt.sign({ _id }, process.env.JWT_SECRET, { expiresIn: "7d" });
 };
 
-// Login the user
+//1. Login the user
 const login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -14,29 +15,40 @@ const login = async (req, res) => {
 
     //Create the JWT
     const token = generateToken(user._id);
-    const userId= user._id //added
-    res.status(200).json({ email: user.email, userId, token }); //added UserId
+    const userId = user._id; //added
+    const picUser = user.profilePicture;
+    res.status(200).json({ email: user.email, userId, token, picUser }); //added UserId
   } catch (error) {
     res.status(400).json(error.message);
   }
 };
 
-// Signup the user
+//2. Signup the user
 const signup = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, name, age, description } = req.body;
   console.log(req.body);
   try {
     const user = await User.signup(email, password);
 
     // Create the JWT
     const token = generateToken(user._id);
-    const userId= user._id //added
+    const userId = user._id; //added
+
+    //Added name
+    const emailHead = email.split("@")[0];
+    user.profilePicture = "person-circle.svg";
+    user.name = emailHead;
+    user.age = 18;
+    user.description = "";
+    user.save();
+    //
 
     const response = {
       email: user.email,
       id: userId,
       token: token,
-    }
+      name: emailHead,
+    };
 
     res.status(200).json(response);
   } catch (error) {
@@ -44,25 +56,18 @@ const signup = async (req, res) => {
   }
 };
 
+//3. Display user
 
-//3. Display all users
-/*
-const getUsers = async (followers, req, res) => {
-  
+const getUser = async (req, res) => {
+  const { id } = req.params;
   try {
-    //const users = await User.find({})
-    followers.forEach(follower=>{
-      const email = User.findById(follower).email
-      const userEmails = userEmails.push(email)
-      return userEmails
-    })
-
-    res.status(200).json(userEmails);
+    const user = await User.findById(id);
+    console.log(user);
+    res.status(200).json(user);
   } catch (error) {
     res.status(400).json(error);
   }
 };
-*/
 
 //5. Update group information
 
@@ -85,8 +90,7 @@ const checkOwnership = async (groupId, userId) => {
   }
 };
 
-//
-const updateUser = async (req, res) => {
+/* const updateGroup = async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -106,7 +110,76 @@ const updateUser = async (req, res) => {
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
+};*/
+
+//6. update user
+const updateUser = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // if (!mongoose.Types.ObjectId.isValid(id)) {
+    //   return res.status(404).json({ error: "User not found!" });
+    // }
+
+    // const user = User.findById(id);
+
+    const user = await User.findByIdAndUpdate({ _id: id }, { ...req.body });
+    user.profilePicture = req.file.filename;
+    user.save();
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found!" });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 };
 
+//7. Get user's post
 
-module.exports = { login, signup };
+//7. Get group posts
+
+const getPost = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await User.findById(id);
+    const userMsgs = user.messages;
+    console.log(userMsgs);
+
+    const posts = await Post.find(
+      { _id: { $in: userMsgs } },
+      {
+        _id: 1,
+        post: 1,
+        postedBy: 1,
+        postUser_group: 1,
+        postedByName: 1,
+        date: 1,
+        address: 1,
+        comments: 1,
+        likes: 1,
+        attending: 1,
+        postTitle: 1,
+        postedToGroupName: 1,
+      }
+    );
+
+    const processedPosts = posts.map((post) => {
+      return {
+        ...post._doc,
+        commentsCount: post.comments.length,
+        attendingCount: post.attending.length,
+      };
+    });
+
+    console.log("All posts");
+    res.status(200).json(processedPosts);
+  } catch (error) {
+    return res.status(400).json(error.message);
+  }
+};
+
+module.exports = { login, signup, getUser, updateUser, getPost };

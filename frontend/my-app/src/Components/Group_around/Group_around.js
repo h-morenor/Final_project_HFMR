@@ -1,6 +1,8 @@
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 import marker from "../../assets/person-fill.svg";
+//import marker from "../../assets/user.png";
+
 import L from "leaflet";
 import { MapContainer, TileLayer, ZoomControl, Marker, Popup} from "react-leaflet";
 import { Map, useMap } from "react-leaflet";
@@ -252,7 +254,11 @@ console.log(location)
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <Marker position={location}>
-            <Popup position={location}></Popup>
+            <Popup position={location}>
+              <div>
+                 <h1>{user.name}</h1>
+              </div>
+            </Popup>
           </Marker>
 
           {

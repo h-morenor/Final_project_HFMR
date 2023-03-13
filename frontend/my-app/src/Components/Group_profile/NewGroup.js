@@ -1,164 +1,128 @@
-import React, { useContext, useState } from "react";
-import { useNavigate} from 'react-router-dom';
-import { useLocation } from "../../hooks/useFindLocation"
+import React, { useContext, useState, Component } from "react";
+import { useNavigate } from "react-router-dom";
+import { useLocation } from "../../hooks/useFindLocation";
 //import useNewGroup from "../../hooks/useNewGroup";
 import { Auth } from "../../context/Auth";
 import { Navigate } from "react-router-dom";
 import MyGroups from "../myGroups/MyGroups";
-import axios from "axios"
+import axios from "axios";
 
-import FilesUploadComponent from '../files-upload-component';
+import FilesUploadComponent from "../files-upload-component";
 
-import { GeoapifyGeocoderAutocomplete, GeoapifyContext } from '@geoapify/react-geocoder-autocomplete'
-import '@geoapify/geocoder-autocomplete/styles/round-borders.css'
-import { GeocoderAutocomplete } from '@geoapify/geocoder-autocomplete';
+import {
+  GeoapifyGeocoderAutocomplete,
+  GeoapifyContext,
+} from "@geoapify/react-geocoder-autocomplete";
+import "@geoapify/geocoder-autocomplete/styles/round-borders.css";
+import { GeocoderAutocomplete } from "@geoapify/geocoder-autocomplete";
 
-
-
-export default function NewGroup({groups, setGroups}) {
-
-
- // const { error, isLoading, newGroup } = useNewGroup();
- // const [img, setImg] = useState();
-  const [title, setTitle] = useState("");
+export default function NewGroup({ groups, setGroups }) {
+  // const { error, isLoading, newGroup } = useNewGroup();
+  // const [img, setImg] = useState();
+  const [picture, setPicture] = useState();
+  const [title, setTitle] = useState("Group");
   const [createdBy, setCreatedBy] = useState("");
-  const [description, setDescription] = useState();
-  const [venueLocation, setVenueLocation] = useState(0);
+  const [description, setDescription] = useState("Test");
+  const [venueLocation, setVenueLocation] = useState("51.505 -0.1");
   const [address, setAddress] = useState("51.505 -0.1");
-  const [max_people, setMax_people] = useState(0);
-  const [category, setCategory] = useState("");
-  const [hashtag, setHashtag] = useState([]);
+  const [max_people, setMax_people] = useState(5);
+  const [category, setCategory] = useState("Sport");
+  const [hashtag, setHashtag] = useState(["Hashtag"]);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState();
   const [selectedImage, setSelectedImage] = useState(null);
- 
+
   const navigate = useNavigate();
 
-const {user} = useContext(Auth)
+  const { user } = useContext(Auth);
 
+  //Tags
+  const handleTags = (e) => {
+    if (e.key === "Enter" && e.target.value !== "") {
+      // if(e.target.lenght > 0) {
+      e.preventDefault();
+      const value = e.target.value;
+      setHashtag([...hashtag, value]);
+      e.target.value = "";
 
-//const {errorLocation, getLocation} = useLocation();
-//const handleLocation = async () => { getLocation()}
+      // }
+    }
+  };
 
-//const UploadAndDisplayImage = () => {
+  //Delete tags
+  const removeTag = (removed) => {
+    const newtags = hashtag.filter((tag) => tag != removed);
+    setHashtag(newtags);
+  };
 
-// change state
-
-/*
-const updateStatus = (json) =>{
-    this.setGroups(prevGroups => [...prevGroups, json]);
-}
-*/
-
-
-//Tags
-const handleTags = (e) => {
-  if(e.key === 'Enter' && e.target.value !== "" ) {
-   // if(e.target.lenght > 0) {
-    e.preventDefault(); 
-    const value = e.target.value
-    setHashtag([...hashtag, value])
-    e.target.value = ""
-    
- // }
-}}
-
-//Delete tags
-const removeTag = (removed) =>{
-  const newtags = hashtag.filter(tag => tag != removed)
-  setHashtag(newtags)
-}
-
-// Adress geocoding
-function onPlaceSelect(value) {
+  // Adress geocoding
+  function onPlaceSelect(value) {
     console.log(value);
-    console.log("selected")
+    console.log("selected");
     console.log(value.properties);
 
-    setAddress(value.properties.formatted)
-    console.log(value.properties.formatted)
+    setAddress(value.properties.formatted);
+    console.log(value.properties.formatted);
     //console.log(value.properties.address_line2)
-    setVenueLocation(`${value.properties.lat} ${value.properties.lon}`)
-    console.log(`${value.properties.lat} ${value.properties.lon}`)
-
+    setVenueLocation(`${value.properties.lat} ${value.properties.lon}`);
+    console.log(`${value.properties.lat} ${value.properties.lon}`);
   }
- 
+
   function onSuggectionChange(value) {
     console.log(value);
-    
   }
 
-// Formula
+  // Formula
 
-const handleNewGroup = async (event) => {
+  const handleNewGroup = async (event) => {
     event.preventDefault();
     setIsLoading(true);
     setError(null);
 
-    if (!user) {
-      console.log('user not found!')
-      setError('User not found!');
-      return
-    }
-    
-    const group = { selectedImage, title, createdBy, description, address, max_people, category, hashtag, venueLocation };
+    const formData = new FormData();
+    formData.append("picture", picture);
+    formData.append("title", title);
+    formData.append("venueLocation", venueLocation);
+    formData.append("description", description);
+    formData.append("address", address);
+    formData.append("category", category);
+    formData.append("hashtag", hashtag);
 
-    const response = await fetch("/api/group/new", {
-      method: "POST",
+    const config = {
       headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${user.token}`
+        Authorization: `Bearer ${user.token}`,
+        "content-type": "multipart/form-data",
       },
-      body: JSON.stringify(group),
-    });
+    };
 
-    const json = await response.json()
-    
-    if (!response.ok) {
-      setIsLoading(false);
-      setError(json);
-      console.log("Error! please rectify")
-      throw(error)
+ 
+    if (!user) {
+      console.log("user not found!");
+      setError("User not found!");
+      return;
     }
-    if (response.ok) {
-      setIsLoading(false)
-      setError(null);
-      console.log(json)
 
-      navigate(`/group/${json._id}`, {replace: true});
-    }       
+    const url = "/api/group/new";
+
+    axios
+      .post(url, formData, config)
+
+      .then((response) => response.data)
+      .then((json) => {
+        setIsLoading(false);
+        setError(null);
+        console.log(json);
+
+        navigate(`/group/${json._id}`, { replace: true });
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        // setError(json);
+        console.log("Error! please rectify");
+      });
   };
 
- // Experiment
-
-//  const handleImageChange = (event) => {
-//   setSelectedImage(event.target.files[0]);
-// };
-
-//  const handleSubmit = (event) => {
-//   event.preventDefault();
-//   const formData = new FormData();
-//   formData.append('image', selectedImage);
-//   formData.append('title', title);
-//   formData.append('venueLocation', venueLocation);
-//   formData.append('description', description);
-//   formData.append('address', address);
-//   formData.append('category', category);
-//   formData.append('hashtag', hashtag);
-  
-//   axios.post('/upload', formData)
-//     .then(res => {
-//       console.log(res.data);
-//     })
-//     .catch(err => {
-//       console.error(err);
-//     });
-// };
-
-///////// End of Experiment
-
-
-/*
+  /*
 <div>
       <label   htmlFor="group_pic"  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"   >    Group picture    </label>
       {selectedImage && (
@@ -185,187 +149,196 @@ const handleNewGroup = async (event) => {
     </div>
 */
 
-
   return (
     <div>
-      
-   
-
-<form className="m-20 w-6/12">
-  <div className="grid gap-3 md:grid-cols-1">
-
-     <div>
-     <div className="container">
+      <form className="m-20 w-6/12">
+        <div className="grid gap-3 md:grid-cols-1">
+          {
+            <div>
+              <div className="container">
                 <div className="row">
-                    <form>
-                        <h3>React File Upload</h3>
-                        <div className="form-group">
-                            <input type="file" onChange={handleImageChange} />
-                        </div>
-                    </form>
+                  <h3>React File Upload</h3>
+                  <div className="form-group">
+                    <input
+                      type="file"
+                      onChange={(e) => {
+                        setPicture(e.target.files[0]);
+                      }}
+                    />
+                  </div>
                 </div>
+              </div>
             </div>
-   </div> 
-    
-    <div>
-      <label      htmlFor="group_name"     className="block mb-2 text-sm font-medium text-gray-900 text-white"   >    Group name    </label>
-      <input
-        type="text"
-        id="group_name"
-        value={title}
-        onChange={(e) => {     setTitle(e.target.value);    }}
-        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        placeholder="The avengers"
-        required=""
-      />
-    </div>
-    <div>
-      <label    htmlFor="max_people"    className="block mb-2 text-sm font-medium text-gray-900 text-white"   >    Max people    </label>
-      <input
-        type="number"
-        id="max_people"
-        value={max_people}
-        onChange={(e) => {     setMax_people(e.target.value);    }}
-        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        placeholder="ie: 20 or no max"
-        required=""
-      />
-    </div>
-    <div>
-      <label   htmlFor="category"   className="block mb-2 text-sm font-medium text-gray-900 text-white"   >     Category   </label>
-      <input
-        type="text"
-        id="category"
-        value={category}
-        onChange={(e) => {     setCategory(e.target.value);    }}
-        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        placeholder="Select"
-        required=""
-      />
-    </div>
-    
-    <div>
-      <label   htmlFor="hashtag"   className="block mb-2 text-sm font-medium text-gray-900 text-white"   >     Hashtags   </label>
-      <div className="flex">
-      <div className="flex gap-1z items-center">
-      {hashtag.map((tag, index) => {
-        return (
-        
-          <span key={index} 
-          className="text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1 bg-blue-200 text-blue-700 rounded-full"
-          onClick={() => removeTag(tag)}>{tag}</span>
-          
-        
-        )}  )}
-      </div>
-      <input
-        type="text"
-        onKeyDown={handleTags} 
-        
-        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        placeholder="Add"
-      />
-      </div>
-    </div>
+          }
 
+          <div>
+            <label
+              htmlFor="group_name"
+              className="block mb-2 text-sm font-medium text-gray-900 text-white"
+            >
+              {" "}
+              Group name{" "}
+            </label>
+            <input
+              type="text"
+              id="group_name"
+              value={title}
+              onChange={(e) => {
+                setTitle(e.target.value);
+              }}
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="The avengers"
+              required=""
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="max_people"
+              className="block mb-2 text-sm font-medium text-gray-900 text-white"
+            >
+              {" "}
+              Max people{" "}
+            </label>
+            <input
+              type="number"
+              id="max_people"
+              value={max_people}
+              onChange={(e) => {
+                setMax_people(e.target.value);
+              }}
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="ie: 20 or no max"
+              required=""
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="category"
+              className="block mb-2 text-sm font-medium text-gray-900 text-white"
+            >
+              {" "}
+              Category{" "}
+            </label>
+            <input
+              type="text"
+              id="category"
+              value={category}
+              onChange={(e) => {
+                setCategory(e.target.value);
+              }}
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Select"
+              required=""
+            />
+          </div>
 
-<div>
-  <label
-    htmlFor="Venue address"
-    className="block mb-2 text-sm font-medium text-gray-900 text-white" >
-    Venue address
-  </label>
-  <div >
-    <GeoapifyContext apiKey="178a21e11be94a9f8f92b2a0221c8ac5" >
-      <GeoapifyGeocoderAutocomplete placeholder="Enter address of the venue here" required="yes"
-        
-        placeSelect={onPlaceSelect}
-        suggestionsChange={onSuggectionChange}
-        />
-    </GeoapifyContext>
-  </div>
+          <div>
+            <label
+              htmlFor="hashtag"
+              className="block mb-2 text-sm font-medium text-gray-900 text-white"
+            >
+              {" "}
+              Hashtags{" "}
+            </label>
+            <div className="flex">
+              <div className="flex gap-1z items-center">
+                {hashtag.map((tag, index) => {
+                  return (
+                    <span
+                      key={index}
+                      className="text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1 bg-blue-200 text-blue-700 rounded-full"
+                      onClick={() => removeTag(tag)}
+                    >
+                      {tag}
+                    </span>
+                  );
+                })}
+              </div>
+              <input
+                type="text"
+                onKeyDown={handleTags}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="Add"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label
+              htmlFor="Venue address"
+              className="block mb-2 text-sm font-medium text-gray-900 text-white"
+            >
+              Venue address
+            </label>
+            <div>
+              <GeoapifyContext apiKey="178a21e11be94a9f8f92b2a0221c8ac5">
+                <GeoapifyGeocoderAutocomplete
+                  placeholder="Enter address of the venue here"
+                  required="yes"
+                  placeSelect={onPlaceSelect}
+                  suggestionsChange={onSuggectionChange}
+                />
+              </GeoapifyContext>
+            </div>
+          </div>
+
+          <div>
+            <label
+              htmlFor="description"
+              className="block mb-2 text-sm font-medium text-gray-900 text-white"
+            >
+              Group description
+            </label>
+            <textarea
+              id="description"
+              value={description}
+              onChange={(e) => {
+                setDescription(e.target.value);
+              }}
+              rows={4}
+              className="block p-2.5 w-full h-10 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Write your thoughts here..."
+              defaultValue={""}
+            />
+          </div>
+        </div>
+
+        <div className="flex items-start mb-6">
+          <div className="flex items-center h-5">
+            <input
+              id="remember"
+              type="checkbox"
+              defaultValue=""
+              className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800"
+              required=""
+            />
+          </div>
+          <label
+            htmlFor="remember"
+            className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300 text-white"
+          >
+            I agree with the{" "}
+            <a href="#" className="text-blue-600 hover:underline text-blue-500">
+              terms and conditions
+            </a>
+            .
+          </label>
+        </div>
+
+        {/* We changed this from handleNewGroup to handleSubmit */}
+        <button
+          onClick={handleNewGroup}
+          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 border-white"
+        >
+          Submit
+        </button>
+
+        {error && (
+          <div>
+            <p>{error}</p>
+          </div>
+        )}
+      </form>
     </div>
-
-  <div>
-  <label
-    htmlFor="description"
-    className="block mb-2 text-sm font-medium text-gray-900 text-white"
-  >
-    Group description
-  </label>
-  <textarea
-    id="description"
-    value={description}
-
-    onChange={(e) => {     setDescription(e.target.value);    }}
-    rows={4}
-    className="block p-2.5 w-full h-10 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-    placeholder="Write your thoughts here..."
-    defaultValue={""}
-    />
-    </div>
-
-    {/* <div>
-        <div>
-      <label htmlFor="venueLocation" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-        Venue location
-      </label>
-      <input
-        type="address"
-        id="venueLocation"
-        value={venueLocation}
-        onChange={(e) => {     setVenueLocation(e.target.value);    }}
-        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        placeholder=""
-        required=""
-      />
-      <button     className="p-2 border border-red-400 rounded-md"   >   Get current location      </button>
-      </div>
-    </div> */}
-
-  </div>
-  
-  
-
-  
-  
-  <div className="flex items-start mb-6">
-    <div className="flex items-center h-5">
-      <input
-        id="remember"
-        type="checkbox"
-        defaultValue=""
-        className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800"
-        required=""
-      />
-    </div>
-    <label
-      htmlFor="remember"
-      className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300 text-white"
-    >
-      I agree with the{" "}
-      <a href="#" className="text-blue-600 hover:underline text-blue-500">
-        terms and conditions
-      </a>
-      .
-    </label>
-  </div>
-
-    {/* We changed this from handleNewGroup to handleSubmit */}
-  <button onClick={handleSubmit} 
-    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 border-white"
-  >
-    Submit
-  </button>
-   
-    {error && (
-    <div>
-    <p>{error}</p>
-    </div>
-    )}                   
-   
-</form>
-
-    </div>
-  )
+  );
 }

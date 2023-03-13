@@ -1,22 +1,28 @@
-const { default: mongoose } = require("mongoose");
-
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+
+///////////////////
+const pictureSchema = new mongoose.Schema({
+  name: String,
+  path: String,
+});
+
+///////////////////
 
 const GroupSchema = new Schema(
   {
-   /* profileImg:
-    {
-        type: String,
-        required: false,
-    },*/
+    picture: {
+      type: String,
+      required: false,
+    },
     title: {
       type: String,
       required: true,
     },
     //can be created by an user or a group
     createdBy: {
-        type: Schema.Types.ObjectId, 
-        ref: 'User'
+      type: Schema.Types.ObjectId,
+      ref: "User",
     },
     description: {
       type: String,
@@ -32,30 +38,37 @@ const GroupSchema = new Schema(
       type: Number,
       required: false,
     },*/
-    category: { //TODO-Moe: convert to string
+    category: {
+      //TODO-Moe: convert to string
       type: Array,
       required: true,
     },
-    hashtag: { //TODO-Moe: Change to tags?
+    hashtag: {
+      //TODO-Moe: Change to tags?
       type: Array,
       required: false,
     },
-    venueLocation: // TODO-Moe: Use string then string.slice('')
-    {
-        type: Array,
-        required: false,
+    // TODO-Moe: Use string then string.slice('')
+    venueLocation: {
+      type: Array,
+      required: false,
     },
-    address: 
-    {
-        type: String,
-        required: false,
+    address: {
+      type: String,
+      required: false,
     },
     admins: {
-        type: Schema.Types.ObjectId, 
-        ref: 'User'},
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
     followers: {
-        type: Array,
-    required: false,},
+      type: Array,
+      required: false,
+    },
+    posts: {
+      type: Array,
+      required: false,
+    },
   },
   { timestamps: true }
 );
