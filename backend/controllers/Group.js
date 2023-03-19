@@ -251,9 +251,12 @@ const updateGroup = async (req, res) => {
       return res.status(404).json({ error: "Group not found!" });
     }
 
+    //const group = await Group.findByIdAndUpdate({ _id: id }, { ...req.body });
     const group = await Group.findByIdAndUpdate({ _id: id }, { ...req.body });
-    group.picture = req.file.filename;
-    group.save();
+    if (req.file) {
+      group.picture = req.file.filename;
+      group.save();
+    }
 
     if (!group) {
       return res.status(404).json({ error: "Group not found!" });
@@ -501,7 +504,7 @@ const getMessage = async (req, res) => {
 const newPost = async (req, res) => {
   const { id } = req.params;
 
-  const { post, postTitle } = req.body;
+  const { post, postTitle, date, address } = req.body;
   try {
     const newPost = await Post.create({
       post: post,
@@ -509,6 +512,8 @@ const newPost = async (req, res) => {
 
       postedBy: req.user._id.toString(),
       postTitle: postTitle,
+      date: date,
+      address: address,
     });
 
     const group = await Group.findById(id);
@@ -560,6 +565,33 @@ const sendMessages = async (groupId, newPostId) => {
   }
 };
 
+//11.b Edit post
+
+const modifyPost = async (req, res) => {
+  const { id } = req.params; //this is the post
+  const userId = req.user._id.toString();
+  console.log(id);
+  try {
+    //const resource = await checkOwnership(id, req.user._id);
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(404).json({ error: "Post not found!" });
+    }
+
+    console.log(req.body);
+    const post = await Post.findByIdAndUpdate({ _id: id }, { ...req.body });
+    console.log("updated");
+
+    if (!post) {
+      return res.status(404).json({ error: "Post not found!" });
+    }
+
+    res.status(200).json(post);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
 //12. Get group posts
 
 const getPost = async (req, res) => {
@@ -586,8 +618,10 @@ const getPost = async (req, res) => {
         postedToGroupName: 1,
         postTitle: 1,
         postedByProfilePicture: 1,
+        createdAt: 1,
+        updatedAt: 1,
       }
-    );
+    ).sort({ createdAt: -1 });
 
     const processedPosts = posts.map((post) => {
       return {
@@ -610,7 +644,6 @@ const getPost = async (req, res) => {
 const get1Post = async (req, res) => {
   const { id } = req.params;
   console.log(id);
-
   try {
     const post = await Post.findById(id);
     console.log(post);
@@ -622,7 +655,7 @@ const get1Post = async (req, res) => {
       attendingCount: post.attending.length,
     };
 
-    console.log("1 posts");
+    console.log("Found posts");
     res.status(200).json(processedPost);
   } catch (error) {
     return res.status(400).json(error.message);
@@ -674,6 +707,8 @@ const getGroupComments = async (req, res) => {
         sender: 1,
         senderName: 1,
         timestamps: 1,
+        createdAt: 1,
+        updatedAt: 1,
       }
     );
 
@@ -696,7 +731,6 @@ const newlike = async (req, res) => {
 
   console.log(id);
   console.log(userId);
-
   try {
     const post = await Post.findById(id);
     const postLikes = post.likes;
@@ -708,26 +742,11 @@ const newlike = async (req, res) => {
         likedbyuser = true;
       }
     });
-
     if (likedbyuser === false) {
       post.likes.push(req.user._id);
       post.save();
     }
-
-    // if (
-    //   post.likes.filter(
-    //     (like) => (like.toString() === req.user._id.toString()).length
-    //   ) === 0
-    // ) {
-    //   console.log("test filter");
-    //   post.likes.push(req.user._id);
-    //   post.save();
-    // }
-
-    console.log(post.likes);
-
     const processedLikes = { likesCount: post.likes.length };
-
     res.status(200).json(processedLikes);
   } catch (error) {
     return res.status(400).json(error.message);
@@ -750,19 +769,15 @@ const unlike = async (req, res) => {
     const postLikes = post.likes;
 
     let likedbyuser = false;
-    console.log(likedbyuser);
 
     const liked = postLikes.map((likedby) => {
-      console.log(likedby);
-      console.log(userId);
-
       if (likedby === userId) {
         likedbyuser = true;
       }
     });
 
     if (likedbyuser === true) {
-      post.likes.remove(userId);
+      post.likes.remove(req.user._id);
       post.save();
     }
 
@@ -868,4 +883,5 @@ module.exports = {
   newattend,
   unattend,
   get1Post,
+  modifyPost,
 };

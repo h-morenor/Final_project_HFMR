@@ -39,7 +39,7 @@ export default function GroupCard() {
     }
 
     const goGroup = async () => {
-      console.log(id);
+      //console.log(id);
       //console.log(`/api/group/${id}`);
       const response = await fetch(`/api/group/${id}`, {
         //method: "GET",
@@ -59,10 +59,10 @@ export default function GroupCard() {
       console.log(json.followers);
       const groupFollowers = json.followers;
       const existing = groupFollowers.forEach((follower) => {
-        console.log("ownership");
+        //console.log("ownership");
 
-        console.log(follower);
-        console.log(user.userId);
+        //console.log(follower);
+        //console.log(user.userId);
 
         if (follower === user.userId) {
           setExistinGroup(true);
@@ -123,17 +123,17 @@ export default function GroupCard() {
   };
 
   return (
-    <div>
-      <div className=" w-3/4 m-auto ">
-        <div className="flex  items-center  bg-white border rounded-lg shadow-md md:flex-row   dark:border-gray-700 dark:bg-gray-800 h-72 ">
+    <div className="h-[calc(100vh-136px)] overflow-y-scroll">
+      <div className=" w-3/4 m-auto h-[calc(100vh-136px)] max-w-5xl ">
+        <div className="flex flex-col items-center bg-white border rounded-lg shadow-md md:flex-row dark:border-gray-700 dark:bg-gray-800 h-70 ">
           <img
-            className="object-cover w-40 rounded-t-lg h-auto  md:rounded-none md:rounded-l-lg"
+            className="object-cover w-40 rounded-lg h-auto  "
             src={`http://localhost:3000/api/group/image/${group.picture}`}
             alt=""
           />
 
           <div className="flex flex-col p-2 w-2/3 h-full ">
-            <div>
+            <div className="flex flex-col md:flex-row gap-1 items-center ">
               <h5 className=" text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                 {group.title}
               </h5>
@@ -155,21 +155,21 @@ export default function GroupCard() {
 
             <div>
               <h2 className="font-bold ">Address</h2>
-              <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
+              <p className="font-normal text-gray-700 dark:text-gray-400">
                 {group.address}
               </p>
             </div>
 
             <div>
               <h2 className="font-bold ">Description</h2>
-              <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
+              <p className="font-normal text-gray-700 dark:text-gray-400">
                 {group.description}
               </p>
             </div>
 
             <div>
               <h2 className="font-bold ">Members</h2>
-              <div className="card-actions justify-start">
+              <div className="card-actions flex justify-start items-center ">
                 {groupFollowers.map((followersId) => {
                   return <FollowersInfo followersId={followersId} />;
                 })}
@@ -182,11 +182,13 @@ export default function GroupCard() {
                 )}
               </div>
             </div>
+          </div>
 
-            <div className="flex justify-end">
-              {user.userId === group.createdBy && (
+          <div className="flex ">
+            <div className="flex  justify-end gap-1">
+              {user && (
                 <img
-                  className="w-7"
+                  className="w-7 cursor-pointer"
                   src={envelope}
                   alt="message"
                   onClick={() => {
@@ -196,7 +198,7 @@ export default function GroupCard() {
               )}
               {user.userId === group.createdBy && (
                 <img
-                  className="w-7"
+                  className="w-7 cursor-pointer"
                   src={pen}
                   alt="pen"
                   onClick={() => {
@@ -207,7 +209,7 @@ export default function GroupCard() {
               {user.userId === group.createdBy && (
                 <div>
                   <img
-                    className="w-7"
+                    className="w-7 cursor-pointer"
                     src={trash}
                     alt="trash"
                     onClick={() => setShowModal(true)}
@@ -222,42 +224,42 @@ export default function GroupCard() {
                 </div>
               )}
             </div>
-          </div>
-          <div /*className="flex flex-col p-2 w-1/3 h-full "*/>
-            {existinGroup !== true && (
-              <div>
-                <button
-                  className="p-2 border border-red-400 rounded-md w-20"
-                  onClick={() => {
-                    handleJoinGroup();
-                  }}
-                >
-                  Join
-                </button>
-              </div>
-            )}
-            <JoinMessageModal
-              showModalJoin={showModalJoin}
-              id={id}
-              groupTitle={group.title}
-              onClose={() => setShowModalJoin(false)}
-            />
-            {user.userId !== group.createdBy && existinGroup === true && (
-              <div>
-                <button
-                  className="p-2 border border-red-400 rounded-md w-20"
-                  onClick={() => handleExitGroup()}
-                >
-                  {" "}
-                  Exit{" "}
-                </button>
-              </div>
-            )}
+            <div /*className="flex flex-col p-2 w-1/3 h-full "*/>
+              {existinGroup !== true && (
+                <div>
+                  <button
+                    className="p-2 border border-red-400 rounded-md w-20 cursor-pointer"
+                    onClick={() => {
+                      handleJoinGroup();
+                    }}
+                  >
+                    Join
+                  </button>
+                </div>
+              )}
+              <JoinMessageModal
+                showModalJoin={showModalJoin}
+                id={id}
+                groupTitle={group.title}
+                onClose={() => setShowModalJoin(false)}
+              />
+              {user.userId !== group.createdBy && existinGroup === true && (
+                <div>
+                  <button
+                    className="p-0.5 border border-red-400 rounded-md w-[35px] ml-0.5 cursor-pointer"
+                    onClick={() => handleExitGroup()}
+                  >
+                    {" "}
+                    Exit{" "}
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
         {/* Posts Section */}
-        <div className="flex flex-col items-center bg-white border rounded-lg shadow-md dark:border-gray-700 dark:bg-gray-800 h-60  overflow-y-scroll">
+        <div className="flex flex-col items-center bg-white border rounded-lg shadow-md dark:border-gray-700 dark:bg-gray-800   h-[calc(100vh-350px)] overflow-y-scroll">
           {posts === [] && (
             <div>
               <span className="text-xs inline-block py-1 px-2.5 leading-none text-center whitespace-nowrap align-baseline font-bold bg-blue-500 text-white rounded-full">
@@ -266,7 +268,7 @@ export default function GroupCard() {
             </div>
           )}
           {posts !== [] && (
-            <div className="w-3/4">
+            <div className="w-full">
               {posts.map((post) => {
                 const postId = post._id;
                 return <PostsComponent post={post} key={postId} />;

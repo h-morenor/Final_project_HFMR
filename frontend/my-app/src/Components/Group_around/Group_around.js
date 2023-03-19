@@ -1,100 +1,100 @@
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 import marker from "../../assets/person-fill.svg";
-//import marker from "../../assets/user.png";
 
 import L from "leaflet";
-import { MapContainer, TileLayer, ZoomControl, Marker, Popup} from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  ZoomControl,
+  Marker,
+  Popup,
+} from "react-leaflet";
 import { Map, useMap } from "react-leaflet";
 import { Auth } from "../../context/Auth";
 import { useContext } from "react";
 import useFetchGroups from "../../hooks/useFetchGroups";
 import GroupInfo from "./GroupInfo";
 import { useGeolocated } from "react-geolocated";
-import useGeoLocation from "../../hooks/useFindLocation"
-import useFindLocation from "../../hooks/useFindLocation"
+import useGeoLocation from "../../hooks/useFindLocation";
+import useFindLocation from "../../hooks/useFindLocation";
+import { useNavigate } from "react-router-dom";
 //import useFindLocation from "react-router-dom";
 
+export default function AccessPage({ groups, setGroups }) {
+  console.log("component render");
 
-export default function AccessPage({ groups, setGroups}) {
-
-  console.log("component render")
-
-  //, lat, setLat, long, setLong, location, setLocation 
+  //, lat, setLat, long, setLong, location, setLocation
 
   const [filterTitle, setFilterTitle] = useState("");
   [groups, setGroups] = useFetchGroups();
   const [error, setError] = useState("");
   const { user } = useContext(Auth);
-  const [groupsFiltered, setGroupsFiltered] = useFetchGroups()
-  const [location, setLocation] = useState([51.505, -0.1])
-  console.log(location)
+  const [groupsFiltered, setGroupsFiltered] = useFetchGroups();
+  const [location, setLocation] = useState([51.505, -0.1]);
+  console.log(user);
 
-  const [errorLocation, setErrorLocation] = useState()
+  const [errorLocation, setErrorLocation] = useState();
 
-
-//Filters
-const handleFilters = (e) => {
-  if(e.key === 'Enter' && e.target.value !== "" ) {
-   // if(e.target.lenght > 0) {
-    console.log("input")
-    e.preventDefault(); 
-    const value = e.target.value
-    setFilterTitle(value.toUpperCase())
-    e.target.value = ""  
-}}
-
-//Modify filter every time it changes
-useEffect(()=>{
-console.log("hello")
-
-if(filterTitle===""){
-  setGroupsFiltered(groups)
-    }else{
-      const filteredGroupsArray = groups.filter((group) => {
-      const groupt =  group.title.toUpperCase()
-      return groupt.search(filterTitle) !== -1
-      })
-      setGroupsFiltered(filteredGroupsArray)
+  //Filters
+  const handleFilters = (e) => {
+    if (e.key === "Enter" && e.target.value !== "") {
+      // if(e.target.lenght > 0) {
+      console.log("input");
+      e.preventDefault();
+      const value = e.target.value;
+      setFilterTitle(value.toUpperCase());
+      e.target.value = "";
     }
+  };
 
-},[filterTitle])
+  const navigate = useNavigate();
+  //Modify filter every time it changes
+  useEffect(() => {
+    console.log("hello");
 
-//Delete tags
-const removeFilters = () =>{
-  setFilterTitle("")
-}
-
-///////////////////////////////////////////////////
-
-//Location
-
-
-
-const getLocation = () => {
-      if(navigator.geolocation)  {
-      navigator.geolocation.getCurrentPosition ((position) => {
-      //  console.log(position.coords)
-      //getaddress(position.coords.latitude, position.coords.longitude)
-      //
-      //console.log(position.coords.latitude)
-      //console.log(position.coords.longitude)
-      console.log([position.coords.latitude, position.coords.longitude])
-      setLocation([position.coords.latitude, position.coords.longitude])
-      setErrorLocation(null)
+    if (filterTitle === "") {
+      setGroupsFiltered(groups);
+    } else {
+      const filteredGroupsArray = groups.filter((group) => {
+        const groupt = group.title.toUpperCase();
+        return groupt.search(filterTitle) !== -1;
       });
-      }else{
-      console.log("Browser does not support geolocation")
-      setErrorLocation(errorLocation);
-      }
-       
-  }
+      setGroupsFiltered(filteredGroupsArray);
+    }
+  }, [filterTitle]);
 
-  useEffect(()=>{
-       getLocation()
-       
-  },[])
-     
+  //Delete tags
+  const removeFilters = () => {
+    setFilterTitle("");
+  };
+
+  ///////////////////////////////////////////////////
+
+  //Location
+
+  const getLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        //  console.log(position.coords)
+        //getaddress(position.coords.latitude, position.coords.longitude)
+        //
+        //console.log(position.coords.latitude)
+        //console.log(position.coords.longitude)
+        console.log([position.coords.latitude, position.coords.longitude]);
+        setLocation([position.coords.latitude, position.coords.longitude]);
+        setErrorLocation(null);
+      });
+    } else {
+      console.log("Browser does not support geolocation");
+      setErrorLocation(errorLocation);
+    }
+  };
+
+  useEffect(() => {
+    getLocation();
+  }, []);
+
   /*
  const showposition = async() => {
   await 
@@ -106,12 +106,9 @@ const getLocation = () => {
      
 */
 
+  //console.log(lat, setLat, long, setLong)
 
-//console.log(lat, setLat, long, setLong)
-
-
-
-/*
+  /*
   const { coords, isGeolocationAvailable, isGeolocationEnabled } =
     useGeolocated({
       positionOptions: {
@@ -145,24 +142,21 @@ const getLocation = () => {
   }, []);
 */
 
-    // const FetchLocation = () => {
-    //   if (navigator.geolocation) {
-    //     const json = navigator.geolocation.getCurrentPosition((position) => {
-    //       //getaddress(position.coords.latitude, position.coords.longitude)
-    //       setLocation([position.coords.latitude, position.coords.longitude]);
-    //       //console.log(position.coords.latitude)
-    //       //console.log(position.coords.longitude)
-    //     });
-    //   } else {
-    //     console.log("Browser does not support geolocation");
-    //   }
-    // };
-    // FetchLocation();
+  // const FetchLocation = () => {
+  //   if (navigator.geolocation) {
+  //     const json = navigator.geolocation.getCurrentPosition((position) => {
+  //       //getaddress(position.coords.latitude, position.coords.longitude)
+  //       setLocation([position.coords.latitude, position.coords.longitude]);
+  //       //console.log(position.coords.latitude)
+  //       //console.log(position.coords.longitude)
+  //     });
+  //   } else {
+  //     console.log("Browser does not support geolocation");
+  //   }
+  // };
+  // FetchLocation();
 
   //////
-  
-
-
 
   /*
     const show = () => {
@@ -187,10 +181,10 @@ console.log("example:")
 51.505, -0.09
 
 */
-//console.log({coords})
-//console.log(GeolocationCoordinates.latitude)
+  //console.log({coords})
+  //console.log(GeolocationCoordinates.latitude)
 
-/*
+  /*
 useEffect( ()=>{
 navigator.geolocation.getCurrentPosition(async (position) => {
  console.log(position.coords.latitude, position.coords.longitude);
@@ -201,9 +195,7 @@ console.log(location)
 
 */
 
-
-
- function View({ center }) {
+  function View({ center }) {
     const map = useMap();
     map.setView(center);
     return null;
@@ -216,38 +208,37 @@ console.log(location)
     iconSize: [46, 56],
   });
 
-
   const loc = [51.505, -0.1];
 
   return (
-    <div >
+    <div>
       <div id="map">
+        <div className="flex  items-center m-1">
+          <input
+            type="text"
+            onKeyDown={handleFilters}
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-50 p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="Filter by group title"
+          />
 
-      <div className="flex gap-1z items-center m-1">
-        <input
-          type="text"
-          onKeyDown={handleFilters}         
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-50 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          placeholder="Filter by group title"
-        />
-
-        <div >
-          {(filterTitle !=="") &&
-              <span 
-              className="text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1 bg-blue-200 text-blue-700 rounded-full"
-              onClick={() => removeFilters()}>{filterTitle}
-              </span>       
-          }
+          <div>
+            {filterTitle !== "" && (
+              <span
+                className="text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1 bg-blue-200 text-blue-700 rounded-full"
+                onClick={() => removeFilters()}
+              >
+                {filterTitle}
+              </span>
+            )}
+          </div>
         </div>
-      </div>
-        
+
         <MapContainer
           center={location}
           zoom={15}
           scrollWheelZoom={true}
           ZoomControl={false}
         >
-
           <View center={location} />
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -255,15 +246,31 @@ console.log(location)
           />
           <Marker position={location}>
             <Popup position={location}>
-              <div>
-                 <h1>{user.name}</h1>
-              </div>
+              {user ? (
+                <div
+                  onClick={() => {
+                    navigate(`/user/${user.userId}`);
+                  }}
+                  className="flex flex-wrap justify-center items-end cursor-pointer"
+                >
+                  <span className="rounded-full text-gray-500 bg-gray-200 font-semibold text-sm flex align-center cursor-pointer active:bg-gray-300 transition duration-300 ease w-max"></span>
+                  <img
+                    className="object-cover w-10 rounded-lg h-auto  "
+                    src={`http://localhost:3000/api/group/image/${user.picUser}`}
+                    alt=""
+                  />
+                  {/* <div className="flex items-center px-3 py-2 font-bold">
+                    {user.title}
+                  </div>
+                  <div className="truncate">{user.description}</div> */}
+                </div>
+              ) : (
+                ""
+              )}
             </Popup>
           </Marker>
 
-          {
-                    
-          groupsFiltered.map((group) => (
+          {groupsFiltered.map((group) => (
             <Marker
               key={group.id}
               position={[
@@ -282,23 +289,9 @@ console.log(location)
                 </div>
               </Popup>
             </Marker>
-          ))
-          }
+          ))}
         </MapContainer>
       </div>
     </div>
   );
 }
-
-/*
-{  usersData.map(user => (    
-        <Marker key={user.id} position={[user.address.geo.lat, user.address.geo.lng]}>
-          <Popup position={[user.address.geo.lat, user.address.geo.lng]}>
-            <div>
-              <h1>{user.username}</h1>
-            </div>
-          </Popup>
-          
-        </Marker>     
-        ))}
-*/

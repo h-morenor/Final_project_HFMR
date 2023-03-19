@@ -22,7 +22,7 @@ export default function NewPosts({ groups, setGroups }) {
   //const [] = useState();
   //const [setUser] = useState();
   const [name, setName] = useState();
-  const [max_people, setMax_people] = useState(5);
+  const [date, setDate] = useState("");
   const [address, setAddress] = useState("51.505 -0.1");
   const [venueLocation, setVenueLocation] = useState("51.505 -0.1");
   const [post, setPost] = useState();
@@ -90,6 +90,8 @@ export default function NewPosts({ groups, setGroups }) {
     const newPost = {
       post: post,
       postTitle: postTitle,
+      date: date,
+      address: address,
       //postUser_group,
       //postedBy,
       //postedByName,
@@ -170,7 +172,7 @@ export default function NewPosts({ groups, setGroups }) {
   //   };
 
   return (
-    <div className="overflow-y-scroll h-[calc(100vh-136px)]">
+    <div className="h-[calc(100vh-136px)]">
       <form className="m-auto w-6/12">
         <div className="grid gap-3 md:grid-cols-1">
           <div className="flex gap-1">
@@ -185,38 +187,19 @@ export default function NewPosts({ groups, setGroups }) {
             </label>
           </div>
 
-          <div className="flex items-start mb-6">
-            <div className="flex items-center h-5">
-              <input
-                id="remember"
-                type="checkbox"
-                defaultValue=""
-                className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800"
-                required=""
-              />
-            </div>
-            <label
-              htmlFor="remember"
-              className="ml-2 text-sm font-medium text-white"
-            >
-              This is an event
-            </label>
-          </div>
-
           <div>
             <label
-              htmlFor="max_people"
+              htmlFor="date"
               className="block mb-2 text-sm font-medium text-white"
             >
-              {" "}
-              Max people{" "}
+              Date
             </label>
             <input
-              type="number"
-              id="max_people"
-              value={max_people}
+              type="date"
+              id="date"
+              value={date}
               onChange={(e) => {
-                setMax_people(e.target.value);
+                setDate(e.target.value);
               }}
               className="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="ie: 20 or no max"
@@ -242,51 +225,51 @@ export default function NewPosts({ groups, setGroups }) {
               </GeoapifyContext>
             </div>
           </div>
-        </div>
 
-        <div>
-          <label
-            htmlFor="postTitle"
-            className="block mb-2 text-sm font-medium text-white"
-          >
-            Subject
-          </label>
-          <input
-            type="text"
-            id="postTitle"
-            value={postTitle}
-            onChange={(e) => {
-              setPostTitle(e.target.value);
-            }}
-            className="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="ie: 20 or no max"
-            required=""
-          />
-        </div>
+          <div>
+            <label
+              htmlFor="postTitle"
+              className="block mb-2 text-sm font-medium text-white"
+            >
+              Post title
+            </label>
+            <input
+              type="text"
+              id="postTitle"
+              value={postTitle}
+              onChange={(e) => {
+                setPostTitle(e.target.value);
+              }}
+              className="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="ie: 20 or no max"
+              required=""
+            />
+          </div>
 
-        <div>
-          <label
-            htmlFor="post"
-            className="block mb-2 text-sm font-medium text-white"
-          >
-            Post
-          </label>
-          <textarea
-            id="post"
-            value={post}
-            onChange={(e) => {
-              setPost(e.target.value);
-            }}
-            rows={4}
-            className="block p-2.5 w-full h-20 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="Write your thoughts here..."
-            defaultValue={""}
-          />
+          <div>
+            <label
+              htmlFor="post"
+              className="block mb-2 text-sm font-medium text-white"
+            >
+              Post
+            </label>
+            <textarea
+              id="post"
+              value={post}
+              onChange={(e) => {
+                setPost(e.target.value);
+              }}
+              rows={4}
+              className="block p-2.5 w-full h-20 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Write your thoughts here..."
+              defaultValue={""}
+            />
+          </div>
         </div>
 
         <button
           onClick={handleNewPost}
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 border-white"
+          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 border-white mt-2"
         >
           Submit
         </button>

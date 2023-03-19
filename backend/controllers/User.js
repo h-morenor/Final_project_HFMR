@@ -48,6 +48,7 @@ const signup = async (req, res) => {
       id: userId,
       token: token,
       name: emailHead,
+      picUser: user.profilePicture,
     };
 
     res.status(200).json(response);
@@ -124,8 +125,11 @@ const updateUser = async (req, res) => {
     // const user = User.findById(id);
 
     const user = await User.findByIdAndUpdate({ _id: id }, { ...req.body });
-    user.profilePicture = req.file.filename;
-    user.save();
+    console.log(req);
+    if (req.file) {
+      user.profilePicture = req.file.filename;
+      user.save();
+    }
 
     if (!user) {
       return res.status(404).json({ error: "User not found!" });
@@ -162,15 +166,19 @@ const getPost = async (req, res) => {
         comments: 1,
         likes: 1,
         attending: 1,
-        postTitle: 1,
         postedToGroupName: 1,
+        postTitle: 1,
+        postedByProfilePicture: 1,
+        createdAt: 1,
+        updatedAt: 1,
       }
-    );
+    ).sort({ createdAt: -1 });
 
     const processedPosts = posts.map((post) => {
       return {
         ...post._doc,
         commentsCount: post.comments.length,
+        likesCount: post.likes.length,
         attendingCount: post.attending.length,
       };
     });

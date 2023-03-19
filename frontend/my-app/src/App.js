@@ -31,6 +31,7 @@ import EditUser from "./Components/User_profile/EditUser";
 import ModifyGroup from "./Components/Group_profile/ModifyGroup";
 
 import NewPosts from "./Components/Posts/NewPosts";
+import EditPosts from "./Components/Posts/Editpost";
 
 function App() {
   const { user } = useContext(Auth);
@@ -108,6 +109,7 @@ useEffect(() => {
         />
         <Route path="/user/edit/:id" element={<EditUser />} />
         <Route path="/group/:id/newpost" element={<NewPosts />} />
+        <Route path="/group/:id/editpost" element={<EditPosts />} />
       </Route>
     </Routes>
   );

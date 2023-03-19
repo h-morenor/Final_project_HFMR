@@ -23,9 +23,9 @@ export default function FollowersInfo(followersId) {
 
   return (
     <div>
-      <div className="flex flex-col">
+      <div className="">
         <img
-          className="w-10 mx-auto  flex flex-col items-center justify-center md:mx-0 lg:mb-0 rounded-full"
+          className="w-8  mx-auto  flex flex-col items-center justify-center md:mx-0 lg:mb-0 rounded-full"
           src={`http://localhost:3000/api/group/image/${userPic}`}
           alt="user pic"
         />

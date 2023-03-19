@@ -56,6 +56,7 @@ const {
   newattend,
   unattend,
   get1Post,
+  modifyPost,
 } = require("../controllers/Group");
 
 const AuthMiddleware = require("../middlewares/Auth");
@@ -102,6 +103,9 @@ router.get("/allmsg/:user1Id/:user2Id", getMessage);
 
 //11. New post
 router.post("/:id/newpost", newPost);
+
+//11.b Modify post
+router.patch("/:id/editpost", modifyPost);
 
 //12. Get post
 router.get("/:id/getpost", getPost);

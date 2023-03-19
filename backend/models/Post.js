@@ -28,7 +28,10 @@ const PostSchema = new Schema(
       type: String,
       required: true,
     },
-    date: {},
+    date: {
+      type: String,
+      required: true,
+    },
     address: {
       type: String,
       required: false,

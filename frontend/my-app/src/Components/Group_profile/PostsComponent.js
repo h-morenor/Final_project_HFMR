@@ -7,7 +7,7 @@ import { Auth } from "../../context/Auth";
 export default function PostsComponent(post, postId) {
   console.log(post.post);
   const postIdCode = post.post._id;
-  console.log(post.post.likesCount);
+
   //const [post, setPost] = useState();
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
@@ -19,21 +19,19 @@ export default function PostsComponent(post, postId) {
   const [singlePost, setSinglePost] = useState(post.post);
   const [attend, setAttend] = useState();
   const [attending, setAttending] = useState("false");
-  const [display, setDisplay] = useState("true");
+  const [commentsCount, setCommentsCount] = useState(post.post.commentsCount);
+  const [date, setDate] = useState("");
+  const navigate = useNavigate();
 
+  console.log(commentsCount);
   const { user } = useContext(Auth);
-
+  //group.venueLocation[0].split(" ")[0],
+  //let dateModif = post.post.createdAt.split("T")[0];
+  //console.log(dateModif);
   useEffect(() => {
     try {
       const getComments = async () => {
         if (post.post._id) {
-          // const response = await fetch(
-          //   `/api/group/${post.post._id}/getgroupcomments/`
-          // );
-
-          // const json = await response.json();
-          // setComments(data);
-
           fetch(`/api/group/${post.post._id}/getgroupcomments/`)
             .then((response) => response.json())
             .then((data) => {
@@ -44,61 +42,52 @@ export default function PostsComponent(post, postId) {
             });
         }
       };
+
       getComments();
     } catch {
-      setError(error);
+      console.log("error");
     }
   }, [post]);
 
-  //////////////////
+  /* Comments handle*/
+
   const handleNewComment = async () => {
-    //event.preventDefault();
-    // setIsLoading(true);
-    // setError(null);
-
-    if (!user) {
-      console.log("user not found!");
-      setError("User not found!");
-      return;
-    }
-
     const newCommentInfo = {
       message: newComment,
     };
-
-    const response = await fetch(`/api/group/${postIdCode}/comment`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`,
-      },
-      body: JSON.stringify(newCommentInfo),
-    });
-
-    const json = await response.json();
-
-    if (!response.ok) {
-      setIsLoading(false);
-      setError(json);
-      throw console.log("Error! please rectify");
-    }
-    if (response.ok) {
-      setIsLoading(false);
-      setError(null);
-    }
-
-    setNewComment("");
-
     try {
-      const getComments = async () => {
-        const response = await fetch(
-          `/api/group/${postIdCode}/getgroupcomments/`
-        );
+      const response = await fetch(`/api/group/${postIdCode}/comment`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+        body: JSON.stringify(newCommentInfo),
+      });
 
-        const json = await response.json();
-        setComments(json);
-      };
-      getComments();
+      const json = await response.json();
+
+      if (!response.ok) {
+        setIsLoading(false);
+        setError(json);
+        throw console.log("Error! please rectify");
+      }
+      if (response.ok) {
+        setIsLoading(false);
+        setError(null);
+
+        const getComments = async () => {
+          const response = await fetch(
+            `/api/group/${postIdCode}/getgroupcomments/`
+          );
+          const json = await response.json();
+          setComments(json);
+        };
+
+        getComments();
+        getpost();
+        setNewComment("");
+      }
     } catch {
       console.log("error");
     }
@@ -109,8 +98,7 @@ export default function PostsComponent(post, postId) {
   useEffect(() => {
     try {
       const checkLike = () => {
-        let likedbyuser = false;
-
+        // let likedbyuser = false;
         const liked = post.post.likes.map((likedby) => {
           if (likedby === user.userId) {
             setLiked(true);
@@ -118,7 +106,17 @@ export default function PostsComponent(post, postId) {
         });
       };
 
+      const checkAttend = () => {
+        //let attendbyuser = false;
+        const att = post.post.attending.map((attendby) => {
+          if (attendby === user.userId) {
+            setAttending(true);
+          }
+        });
+      };
+
       checkLike();
+      checkAttend();
     } catch {
       setError(error);
     }
@@ -134,6 +132,7 @@ export default function PostsComponent(post, postId) {
       const json = await response.json();
       console.log(json);
       setSinglePost(json);
+      setCommentsCount(json.commentsCount);
     } catch {
       console.log("error");
     }
@@ -150,11 +149,9 @@ export default function PostsComponent(post, postId) {
       });
 
       const json = await response.json();
-      console.log(json);
       setLikes(json);
       setLiked(true);
       getpost();
-      //const newData = json.map((item) => console.log(item));
     } catch {
       console.log("error");
     }
@@ -171,7 +168,6 @@ export default function PostsComponent(post, postId) {
       });
 
       const json = await response.json();
-      console.log(json);
       setLikes(json);
       setLiked(false);
       getpost();
@@ -194,9 +190,7 @@ export default function PostsComponent(post, postId) {
       console.log(json);
       setAttend(json);
       setAttending(true);
-      setDisplay(false);
       getpost();
-      //const newData = json.map((item) => console.log(item));
     } catch {
       console.log("error");
     }
@@ -216,8 +210,6 @@ export default function PostsComponent(post, postId) {
       console.log(json);
       setAttend(json);
       setAttending(false);
-      setDisplay(false);
-
       getpost();
     } catch {
       console.log("error");
@@ -228,7 +220,7 @@ export default function PostsComponent(post, postId) {
     <div>
       <div className="flex justify-center ">
         <div className="w-full ">
-          <div className="m-1 block rounded-lg bg-white p-3 shadow-lg dark:bg-neutral-800 dark:shadow-black/20 ">
+          <div className="m-0 block rounded-lg bg-white p-3 shadow-lg dark:bg-neutral-800 dark:shadow-black/20  ">
             <div className="md:flex md:flex-row border border-2">
               <div className=" w-20 mx-auto  flex flex-col items-center justify-center md:mx-0 lg:mb-0">
                 <img
@@ -242,51 +234,101 @@ export default function PostsComponent(post, postId) {
                 </p>
               </div>
               <div className="md:ml-6 w-full">
-                <div>
-                  <p className="mb-6  text-neutral-500 dark:text-neutral-300 text-center">
-                    {post.post.post}
-                  </p>
+                <div className="flex flex-col sm:flex-row">
+                  <div className="sm:w-4/5 text-center flex justify-center">
+                    <p className="font-bold mb-1 text-neutral-500 dark:text-neutral-300 text-center text-xl">
+                      {post.post.post}
+                    </p>
+                  </div>
+                  <div className="sm:w-1/5 text-xs w-full">
+                    {post.post.createdAt ? (
+                      <div className="flex flex-col items-center">
+                        <div className="flex flex-col text-center ">
+                          <h6 className="font-bold">Posted on:</h6>
+                          <p>{post.post.createdAt.split("T")[0]}</p>
+                          <p>
+                            {post.post.createdAt.split("T")[1].split(".")[0]}
+                          </p>
+                        </div>
+
+                        {post.post.postedBy === user.userId && (
+                          <p
+                            className="text-blue-500 cursor-pointer"
+                            onClick={(e) => {
+                              console.log(post);
+                              navigate(`/group/${post.post._id}/editpost`);
+                            }}
+                          >
+                            Edit
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      ""
+                    )}
+                  </div>
                 </div>
-                <div className="flex justify-center gap-1 space-x-5 text-sm">
-                  <div className="flex justify-center gap-1">
+                <div className="flex items-center gap-1 mt-1">
+                  <h2 className="font-bold">Address: </h2>
+                  <p className="text-sm">{post.post.address}</p>
+                </div>
+                <div className="flex items-center gap-1">
+                  <h2 className="font-bold w-[64.44px]">Date: </h2>
+                  <p className="text-sm">{post.post.date}</p>
+                </div>
+                <div className="flex justify-center gap-1 space-x-5 text-sm pt-1">
+                  <hr />
+                  {/* Functions for like and unlike */}
+                  <div className="flex justify-center gap-1 items-center">
                     {liked === true ? (
                       <div className="flex justify-center gap-1">
                         <p>{singlePost.likesCount}</p>
-                        <a onClick={handleUnlike}>Unlike </a>
+                        <a
+                          className="align-middle cursor-pointer"
+                          onClick={handleUnlike}
+                        >
+                          Unlike{" "}
+                        </a>
                       </div>
                     ) : (
-                      <div className="flex justify-center gap-1">
+                      <div className="flex justify-center gap-1 cursor-pointer">
                         <p>{singlePost.likesCount}</p>
                         <a onClick={handleLike}>Like</a>
                       </div>
                     )}
                   </div>
+                  {/* Functions for attend and unattend */}
                   <div className="flex flex-col">
                     <div className="flex justify-center gap-1">
-                      <p>1</p>
-                      <p>Joining event?</p>
+                      <p>{singlePost.attendingCount}</p>
+                      <p>Joining event</p>
                     </div>
                     <div className="flex justify-center gap-1">
-                      {display === true ? (
-                        <div>
-                          <p>Yes</p>
-                          <p>No</p>{" "}
-                        </div>
-                      ) : attending === true ? (
+                      {attending === true ? (
                         <div className="flex justify-center gap-1">
-                          <p>{singlePost.likesCount}</p>
-                          <a onClick={handleUnattend}>No </a>
+                          <p className="text-white bg-green-500 p-0.5 cursor-pointer">
+                            Yes
+                          </p>
+                          <a
+                            className=" p-0.5 cursor-pointer"
+                            onClick={handleUnattend}
+                          >
+                            No{" "}
+                          </a>
                         </div>
                       ) : (
                         <div className="flex justify-center gap-1">
-                          <p>{singlePost.likesCount}</p>
-                          <a onClick={handleAttend}>Yes</a>
+                          <a className=" p-0.5" onClick={handleAttend}>
+                            Yes
+                          </a>
+                          <p className="text-white bg-red-500 p-0.5">No</p>
                         </div>
                       )}
                     </div>
                   </div>
-                  <div className="flex justify-center gap-1">
-                    <p>{post.post.commentsCount}</p>
+                  {/* Functions for comments */}
+                  <div className="flex  gap-1 items-center">
+                    <p>{commentsCount}</p>
                     <p>Comments</p>
                   </div>
                 </div>
@@ -294,7 +336,7 @@ export default function PostsComponent(post, postId) {
             </div>
 
             <div>
-              <div className="collapse">
+              <div className="collapse ">
                 <input type="checkbox" />
                 <div className="collapse-title font-medium text-sm p-0 m-0">
                   See comments
@@ -321,13 +363,13 @@ export default function PostsComponent(post, postId) {
                     onChange={(e) => {
                       setNewComment(e.target.value);
                     }}
-                    className="collapse-content bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 "
+                    className=" bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-10"
                     placeholder="Write your thoughts here..."
                     defaultValue={""}
                   />
                   <button
                     onClick={handleNewComment}
-                    className="collapse-content text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 border-white"
+                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 border-white"
                   >
                     Submit
                   </button>

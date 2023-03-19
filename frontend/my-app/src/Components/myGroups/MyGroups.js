@@ -56,7 +56,7 @@ export default function MyGroups() {
   return (
     <div className="flex flex-col h-[calc(100vh-136px)]">
       {
-        <div className="flex flex-col justify-center h-full m-auto gap-2 p-1">
+        <div className="flex flex-col justify-center gap-1 m-auto h-[calc(100vh-200px)] overflow-y-auto   ">
           {currentPosts.map((group) => {
             const groupId = group._id;
             return (
@@ -66,7 +66,7 @@ export default function MyGroups() {
         </div>
       }
 
-      <div className="btn-group justify-center align-center m-2">
+      <div className="btn-group justify-center align-center m-0.5">
         <Pagination
           postsPerPage={postsPerPage}
           totalPosts={myGroups.length}
@@ -76,15 +76,3 @@ export default function MyGroups() {
     </div>
   );
 }
-
-/*
-
-
-
-
-<div>
-        {groups.map((group) => {
-          return <GroupCard group={group} key={group._id} />;
-        })}
-      </div>
-*/

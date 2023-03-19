@@ -19,34 +19,15 @@ export default function EditUser() {
   const [error, setError] = useState();
   const [picture, setPicture] = useState();
   const [isLoading, setIsLoading] = useState();
+  const [changed, setChanged] = useState("false");
 
   const navigate = useNavigate();
 
   const { dispatch } = useContext(Auth);
 
-  //////
-  // const { error2, isLoading2, login } = useLogin();
-
-  // const handleLogin = async () => {
-  //   await login(email, password);
-  // };
-  /////
-
   useEffect(() => {
-    // setError(null);
-    // if (!user) {
-    //   console.log("user not found!");
-    //   setError("User not found!");
-    //   return;
-    // }
-
     const findUser = async () => {
-      const response = await fetch(`/api/users/${id}`, {
-        // headers: {
-        //   method: "POST",
-        //   //     Authorization: `Bearer ${user.token}`,
-        // },
-      });
+      const response = await fetch(`/api/users/${id}`, {});
 
       console.log("test1");
 
@@ -63,39 +44,15 @@ export default function EditUser() {
     findUser();
   }, []);
 
-  // const updateUser = async () => {
-  //   try {
-  //     const response = await fetch(`/api/users/${id}`, {
-  //       method: "PATCH",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${user.token}`,
-  //       },
-  //       body: JSON.stringify({
-  //         name: name,
-  //         age: age,
-  //         description: description,
-  //       }),
-  //     });
-  //     console.log("trying to update");
-  //     const json = await response.json();
-  //     console.log(json);
-  //     setUser(json);
-  //     // navigate(`/user/${user._id}`, { replace: true });
-  //   } catch {
-  //     console.log("error");
-  //   }
-  // };
-
-  ///
-  /////////////////////////////////////
-  ////////////////////////////////////
   const updateUser = async (event) => {
     event.preventDefault();
     setIsLoading(true);
     setError(null);
 
     const formData = new FormData();
+    if (!picture) {
+      formData.append("picture", user.profilePicture);
+    }
     formData.append("picture", picture);
     formData.append("name", name);
     formData.append("age", age);
@@ -124,17 +81,7 @@ export default function EditUser() {
         setIsLoading(false);
         setError(null);
         console.log(json);
-
-        ///////
-        /////////
-        //////
-        // localStorage.setItem("user", JSON.stringify(json));
-        // // Updating the global Auth context
-        // dispatch({ type: "LOGIN", payload: json });
-
-        ///////
-        /////////
-        //////
+        window.location.reload();
 
         navigate(`/user/${id}`, { replace: true });
       })
@@ -144,10 +91,6 @@ export default function EditUser() {
         console.log("Error! please rectify");
       });
   };
-  //
-  //////
-  /////
-  /////
 
   return (
     <div>
@@ -156,30 +99,62 @@ export default function EditUser() {
           <div>
             <div className="  shadow-lg bg-white w-screen h-full">
               <div
-                className="overflow-hidden rounded-t-lg h-28"
+                className="overflow-hidden rounded-t-lg h-20"
                 style={{ backgroundColor: "#9d789b" }}
               />
 
               <div className="w-24 -mt-12 overflow-hidden border border-2 border-white rounded-full mx-auto bg-white">
                 <img src={`http://localhost:3000/api/group/image/${picture}`} />
               </div>
-              <div className="p-6">
-                <div>
-                  <div className="container">
-                    <div className="row">
-                      <h3>React File Upload</h3>
-                      <div className="form-group">
-                        <input
-                          type="file"
-                          onChange={(e) => {
-                            setPicture(e.target.files[0]);
-                          }}
-                        />
-                      </div>
+
+              <div></div>
+              <div className="p-6 flex flex-col item-start text-left">
+                <div className="item-start">
+                  {/* test */}
+                  <label
+                    htmlFor="group_pic"
+                    className="block mb-1 text-sm font-medium text-gray-900 "
+                  >
+                    Profile picture
+                  </label>
+                  {changed === "true" ? (
+                    <div>
+                      <img
+                        className="block mb-1 text-sm font-medium text-gray-900 text-white"
+                        alt="not fount"
+                        width={"80px"}
+                        src={URL.createObjectURL(picture)}
+                      />
+                      <button
+                        type="button"
+                        className="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-3 py-0.5 text-center mt-1 mb-1 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                        onClick={(e) => {
+                          setPicture(null);
+                          setChanged("false");
+                        }}
+                      >
+                        Remove picture
+                      </button>
+                    </div>
+                  ) : (
+                    <div></div>
+                  )}
+                  {/* end test */}
+
+                  <div className="container mb-1 item-start">
+                    <div className="form-group">
+                      <input
+                        type="file"
+                        onChange={(e) => {
+                          setPicture(e.target.files[0]);
+                          setChanged("true");
+                        }}
+                      />
                     </div>
                   </div>
                 </div>
-                <h4 className="flex align-content text-2xl font-semibold mb-4">
+
+                <h4 className="flex align-content text-2xl font-semibold mb-1">
                   <input
                     type="text"
                     id="user_name"
@@ -194,7 +169,7 @@ export default function EditUser() {
                 </h4>
 
                 <hr />
-                <h4 className="flex align-content text-2xl font-semibold mb-4">
+                <h4 className="flex align-content text-2xl font-semibold mb-1">
                   <input
                     type="number"
                     id="user_age"
@@ -207,7 +182,7 @@ export default function EditUser() {
                     required=""
                   />
                 </h4>
-                <p className="mt-4">
+                <h4 className="flex align-content text-2xl font-semibold mb-1">
                   <input
                     type="text"
                     id="user_description"
@@ -219,23 +194,24 @@ export default function EditUser() {
                     placeholder="Description"
                     required=""
                   />
-                </p>
+                </h4>
               </div>
-
-              <button
-                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                onClick={updateUser}
-              >
-                Update User
-              </button>
-              <button
-                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                onClick={() => {
-                  navigate(`/user/${user._id}`);
-                }}
-              >
-                Cancel
-              </button>
+              <div className="justify-center flex gap-1 m-1">
+                <button
+                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  onClick={updateUser}
+                >
+                  Update User
+                </button>
+                <button
+                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  onClick={() => {
+                    navigate(`/group/${id}`);
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
 
               {error && (
                 <div>
@@ -249,165 +225,3 @@ export default function EditUser() {
     </div>
   );
 }
-
-///////////////////////////////////////////////////////////
-
-//   return (
-//     <div>
-
-//     <form className="m-10">
-//     <div className="grid gap-6 mb-6 md:grid-cols-1">
-
-//     <div>
-//       <label      htmlFor="group_name"     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"   >    Group name    </label>
-//       <input
-//         type="text"
-//         id="group_name"
-//        value = {title}
-//         onChange={(e) => {     setTitle(e.target.value);    }}
-//         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-//         placeholder="The avengers"
-//         required=""
-//       />
-//     </div>
-//     <div>
-//       <label    htmlFor="max_people"    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"   >    Max people    </label>
-//       <input
-//         type="number"
-//         id="max_people"
-//        value={max_people}
-//         onChange={(e) => {     setMax_people(e.target.value);    }}
-//         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-//         placeholder="ie: 20 or no max"
-//         required=""
-//       />
-//     </div>
-//     <div>
-//       <label   htmlFor="category"   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"   >     Category   </label>
-//       <input
-//         type="text"
-//         id="category"
-//         value={category}
-//         onChange={(e) => {     setCategory(e.target.value);    }}
-//         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-//         placeholder="Select"
-//         required=""
-//       />
-//     </div>
-
-//     <div>
-//       <label   htmlFor="hashtag"   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"   >     Hashtags   </label>
-//       <input
-//         type="text"
-//         id="hashtag"
-//         value={hashtag}
-//         onKeyDown={handleTags}
-//         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-//         placeholder="Add"
-//         required=""
-//       />
-//     </div>
-
-//  <div>
-//   <label
-//     htmlFor="Venue address"
-//     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white" >
-//     Venue address
-//   </label>
-//   <div>
-//     <GeoapifyContext apiKey="178a21e11be94a9f8f92b2a0221c8ac5" >
-//       <GeoapifyGeocoderAutocomplete placeholder="Enter address of the venue here" required="yes" value={address}
-
-//         placeSelect={onPlaceSelect}
-//         suggestionsChange={onSuggectionChange}
-//         />
-//     </GeoapifyContext>
-//     </div>
-//   </div>
-
-//   {/*
-//     <div>
-//         <div>
-//       <label htmlFor="venueLocation" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-//         Venue location
-//       </label>
-//       <input
-//         type="address"
-//         id="venueLocation"
-//        value={venueLocation}
-//         onChange={(e) => {     setVenueLocation(e.target.value);    }}
-//         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-//         placeholder=""
-//         required=""
-//       />
-//       <button     className="p-2 border border-red-400 rounded-md"   >   Get current location      </button>
-//       </div>
-//     </div>*/}
-
-//   </div>
-
-//   <div>
-//   <label
-//     htmlFor="description"
-//     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-//   >
-//     Group description
-//   </label>
-//   <textarea
-//     id="description"
-//    value={description}
-
-//     onChange={(e) => {     setDescription(e.target.value);    }}
-//     rows={4}
-//     className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-//     placeholder="Write your thoughts here..."
-//     defaultValue={""}
-//     />
-//     </div>
-
-//   <div className="flex items-start mb-6">
-//     <div className="flex items-center h-5">
-//       <input
-//         id="remember"
-//         type="checkbox"
-//         defaultValue=""
-//         className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800"
-//         required=""
-//       />
-//     </div>
-//     <label
-//       htmlFor="remember"
-//       className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-//     >
-//       I agree with the{" "}
-//       <a href="#" className="text-blue-600 hover:underline dark:text-blue-500">
-//         terms and conditions
-//       </a>
-//       .
-//     </label>
-//   </div>
-//   <button
-//     className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-//   onClick={updateGroup}
-//   >
-//     Update Group
-//   </button>
-//   <button
-//     className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-//   onClick={() => {navigate(`/group/${group._id}`)}}
-//   >
-//     Cancel
-//   </button>
-
-//     {error && (
-//     <div>
-//     <p>{error}</p>
-//     </div>
-//     )}
-
-// </form>
-
-//     </div>
-//   )
-
-// }

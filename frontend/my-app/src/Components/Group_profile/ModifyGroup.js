@@ -19,7 +19,7 @@ export default function ModifyGroup() {
   const [venueLocation, setVenueLocation] = useState(0);
   const [max_people, setMax_people] = useState(0);
   const [category, setCategory] = useState("");
-  const [hashtag, setHashtag] = useState("");
+  const [hashtag, setHashtag] = useState([]);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState();
   const [address, setAddress] = useState("");
@@ -51,6 +51,7 @@ export default function ModifyGroup() {
       setCategory(json.category);
       setHashtag(json.hashtag);
       setAddress(json.address);
+      setPicture(json.picture);
     };
 
     findGroup();
@@ -131,6 +132,7 @@ export default function ModifyGroup() {
     // setError(null);
 
     const formData = new FormData();
+
     formData.append("picture", picture);
     formData.append("title", title);
     formData.append("venueLocation", venueLocation);
@@ -170,8 +172,8 @@ export default function ModifyGroup() {
   /////
 
   return (
-    <div>
-      <form className="m-10">
+    <div className=" h-[calc(100vh-137px)] overflow-y-scroll flex justify-center">
+      <form className="w-6/12 ">
         <div className="grid gap-6 mb-6 md:grid-cols-1">
           {
             <div>
@@ -193,10 +195,10 @@ export default function ModifyGroup() {
           <div>
             <label
               htmlFor="group_name"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              className="block mb-2 text-sm font-medium  text-white"
             >
               {" "}
-              Group name{" "}
+              Group name*{" "}
             </label>
             <input
               type="text"
@@ -210,7 +212,7 @@ export default function ModifyGroup() {
               required=""
             />
           </div>
-          <div>
+          {/* <div>
             <label
               htmlFor="max_people"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -229,14 +231,13 @@ export default function ModifyGroup() {
               placeholder="ie: 20 or no max"
               required=""
             />
-          </div>
+          </div> */}
           <div>
             <label
               htmlFor="category"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              className="block mb-2 text-sm font-medium text-white"
             >
-              {" "}
-              Category{" "}
+              Category*
             </label>
             <input
               type="text"
@@ -251,31 +252,67 @@ export default function ModifyGroup() {
             />
           </div>
 
-          <div>
+          {/* <div>
             <label
               htmlFor="hashtag"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              className="block mb-2 text-sm font-medium text-white"
             >
-              {" "}
-              Hashtags{" "}
+              Hashtags*
             </label>
             <input
               type="text"
               id="hashtag"
-              value={hashtag}
+              // value={hashtag}
               onKeyDown={handleTags}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Add"
               required=""
             />
+          </div> */}
+
+          {/* test*/}
+
+          <div>
+            <label
+              htmlFor="hashtag"
+              className="block mb-2 text-sm font-medium  text-white"
+            >
+              Hashtags*
+            </label>
+            <div className="flex">
+              <div className="flex gap-1z items-center">
+                {hashtag.map((tag, index) => {
+                  return (
+                    <span
+                      key={index}
+                      className="text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1 bg-blue-200 text-blue-700 rounded-full"
+                      onClick={() => removeTag(tag)}
+                    >
+                      {tag}
+                    </span>
+                  );
+                })}
+              </div>
+
+              <input
+                type="text"
+                id="hashtag"
+                onKeyDown={handleTags}
+                className="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="Enter hashtags"
+                required=""
+              />
+            </div>
           </div>
+
+          {/* test end */}
 
           <div>
             <label
               htmlFor="Venue address"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              className="block mb-2 text-sm font-medium text-white"
             >
-              Venue address
+              Venue address*
             </label>
             <div>
               <GeoapifyContext apiKey="178a21e11be94a9f8f92b2a0221c8ac5">
@@ -313,9 +350,9 @@ export default function ModifyGroup() {
         <div>
           <label
             htmlFor="description"
-            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            className="block mb-2 text-sm font-medium text-white"
           >
-            Group description
+            Group description*
           </label>
           <textarea
             id="description"
@@ -330,7 +367,7 @@ export default function ModifyGroup() {
           />
         </div>
 
-        <div className="flex items-start mb-6">
+        {/* <div className="flex items-start mb-6">
           <div className="flex items-center h-5">
             <input
               id="remember"
@@ -340,34 +377,23 @@ export default function ModifyGroup() {
               required=""
             />
           </div>
-          <label
-            htmlFor="remember"
-            className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+        </div> */}
+        <div className="flex gap-1 justify-center mt-2">
+          <button
+            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            onClick={updateGroup}
           >
-            I agree with the{" "}
-            <a
-              href="#"
-              className="text-blue-600 hover:underline dark:text-blue-500"
-            >
-              terms and conditions
-            </a>
-            .
-          </label>
+            Update Group
+          </button>
+          <button
+            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            onClick={() => {
+              navigate(`/group/${group._id}`);
+            }}
+          >
+            Cancel
+          </button>
         </div>
-        <button
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-          onClick={updateGroup}
-        >
-          Update Group
-        </button>
-        <button
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-          onClick={() => {
-            navigate(`/group/${group._id}`);
-          }}
-        >
-          Cancel
-        </button>
 
         {error && (
           <div>

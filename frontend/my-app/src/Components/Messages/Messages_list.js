@@ -11,7 +11,7 @@ export default function Messages_list() {
   const [currentPost, setCurrentPost] = useState("");
 
   const { id } = useParams();
-  console.log(currentPost);
+  //console.log(currentPost);
   const navigate = useNavigate();
 
   // useEffect(() => {
@@ -69,21 +69,26 @@ export default function Messages_list() {
             {posts.map((post) => {
               return (
                 <div
-                  className="flex flex-row py-4 px-2 justify-center items-center border-b-2 hover:bg-gray-100 rounded-xl p-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="flex flex-row py-4 px-2 justify-center items-center border-b-2 hover:bg-gray-100 rounded-xl p-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
                   onClick={(e) => handleChat(post)}
                 >
-                  {/* <div className="w-1/4">
-                    <img
-                      src="https://source.unsplash.com/_7LbC5J-jw4/600x600"
-                      className="object-cover h-12 w-12 rounded-full"
-                      alt=""
-                    />
-                  </div> */}
                   <div className="w-full ">
                     <div className="text-lg font-semibold">
                       {post.postedToGroupName}
                     </div>
                     <span className="text-gray-500">{post.postTitle}</span>
+                    {post.createdAt ? (
+                      <div className="flex gap-2">
+                        <p className="text-gray-500 text-sm">
+                          {post.createdAt.split("T")[0]}
+                        </p>
+                        <p className="text-gray-500 text-sm">
+                          {post.createdAt.split("T")[1].split(".")[0]}
+                        </p>
+                      </div>
+                    ) : (
+                      ""
+                    )}
                   </div>
                 </div>
               );
@@ -93,7 +98,7 @@ export default function Messages_list() {
         </div>
         {/* end chat list */}
         {/* message */}
-        <div className="w-full px-5 flex flex-col justify-between">
+        <div className="w-full p-0 flex flex-col justify-between">
           <div className="overflow-y-scroll ">
             <div className="flex flex-col  ">
               {currentPost !== "" && <PostsComponent post={currentPost} />}

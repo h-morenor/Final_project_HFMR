@@ -20,14 +20,16 @@ export default function NewGroup({ groups, setGroups }) {
   // const { error, isLoading, newGroup } = useNewGroup();
   // const [img, setImg] = useState();
   const [picture, setPicture] = useState();
-  const [title, setTitle] = useState("Group");
+  const [title, setTitle] = useState();
   const [createdBy, setCreatedBy] = useState("");
-  const [description, setDescription] = useState("Test");
+  const [description, setDescription] = useState();
   const [venueLocation, setVenueLocation] = useState("51.505 -0.1");
-  const [address, setAddress] = useState("51.505 -0.1");
-  const [max_people, setMax_people] = useState(5);
-  const [category, setCategory] = useState("Sport");
-  const [hashtag, setHashtag] = useState(["Hashtag"]);
+  const [address, setAddress] = useState("London");
+  const [max_people, setMax_people] = useState(100);
+  const [category, setCategory] = useState();
+  const [hashtag, setHashtag] = useState([]);
+  const [display, setDisplay] = useState(hashtag);
+
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState();
   const [selectedImage, setSelectedImage] = useState(null);
@@ -39,13 +41,12 @@ export default function NewGroup({ groups, setGroups }) {
   //Tags
   const handleTags = (e) => {
     if (e.key === "Enter" && e.target.value !== "") {
-      // if(e.target.lenght > 0) {
-      e.preventDefault();
+      //e.preventDefault();
       const value = e.target.value;
+      //hashtag.push(value);
+      console.log(hashtag);
       setHashtag([...hashtag, value]);
       e.target.value = "";
-
-      // }
     }
   };
 
@@ -95,7 +96,6 @@ export default function NewGroup({ groups, setGroups }) {
       },
     };
 
- 
     if (!user) {
       console.log("user not found!");
       setError("User not found!");
@@ -150,23 +150,50 @@ export default function NewGroup({ groups, setGroups }) {
 */
 
   return (
-    <div>
-      <form className="m-20 w-6/12">
-        <div className="grid gap-3 md:grid-cols-1">
+    <div className=" h-[calc(100vh-137px)] overflow-y-scroll flex justify-center">
+      <form className="w-[360px]">
+        <div className="grid gap-3 md:grid-cols-1 ">
           {
             <div>
-              <div className="container">
-                <div className="row">
-                  <h3>React File Upload</h3>
-                  <div className="form-group">
-                    <input
-                      type="file"
-                      onChange={(e) => {
-                        setPicture(e.target.files[0]);
-                      }}
-                    />
-                  </div>
+              {/* test */}
+              <label
+                htmlFor="group_pic"
+                className="block mb-2 text-sm font-medium  text-white"
+              >
+                Group picture*
+              </label>
+              {picture && (
+                <div>
+                  <img
+                    alt="not fount"
+                    width={"250px"}
+                    src={URL.createObjectURL(picture)}
+                  />
+                  <button
+                    type="button"
+                    className="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-3 py-0.5 text-center mt-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                    onClick={(e) => {
+                      setPicture(null);
+                    }}
+                  >
+                    Remove picture
+                  </button>
                 </div>
+              )}
+              {/* end test */}
+
+              <div className="container">
+                {/* <div className="row"> */}
+
+                <div className="form-group">
+                  <input
+                    type="file"
+                    onChange={(e) => {
+                      setPicture(e.target.files[0]);
+                    }}
+                  />
+                </div>
+                {/* </div> */}
               </div>
             </div>
           }
@@ -174,10 +201,10 @@ export default function NewGroup({ groups, setGroups }) {
           <div>
             <label
               htmlFor="group_name"
-              className="block mb-2 text-sm font-medium text-gray-900 text-white"
+              className="block mb-2 text-sm font-medium  text-white"
             >
               {" "}
-              Group name{" "}
+              Group name*{" "}
             </label>
             <input
               type="text"
@@ -186,15 +213,15 @@ export default function NewGroup({ groups, setGroups }) {
               onChange={(e) => {
                 setTitle(e.target.value);
               }}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="bg-gray-50 border border-gray-300  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="The avengers"
               required=""
             />
           </div>
-          <div>
+          {/* <div>
             <label
               htmlFor="max_people"
-              className="block mb-2 text-sm font-medium text-gray-900 text-white"
+              className="block mb-2 text-sm font-medium  text-white"
             >
               {" "}
               Max people{" "}
@@ -206,18 +233,18 @@ export default function NewGroup({ groups, setGroups }) {
               onChange={(e) => {
                 setMax_people(e.target.value);
               }}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="ie: 20 or no max"
               required=""
             />
-          </div>
+          </div> */}
           <div>
             <label
               htmlFor="category"
-              className="block mb-2 text-sm font-medium text-gray-900 text-white"
+              className="block mb-2 text-sm font-medium text-white"
             >
               {" "}
-              Category{" "}
+              Category*{" "}
             </label>
             <input
               type="text"
@@ -226,7 +253,7 @@ export default function NewGroup({ groups, setGroups }) {
               onChange={(e) => {
                 setCategory(e.target.value);
               }}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="bg-gray-50 border border-gray-300  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Select"
               required=""
             />
@@ -235,30 +262,33 @@ export default function NewGroup({ groups, setGroups }) {
           <div>
             <label
               htmlFor="hashtag"
-              className="block mb-2 text-sm font-medium text-gray-900 text-white"
+              className="block mb-2 text-sm font-medium  text-white"
             >
-              {" "}
-              Hashtags{" "}
+              Hashtags*
             </label>
             <div className="flex">
               <div className="flex gap-1z items-center">
-                {hashtag.map((tag, index) => {
-                  return (
-                    <span
-                      key={index}
-                      className="text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1 bg-blue-200 text-blue-700 rounded-full"
-                      onClick={() => removeTag(tag)}
-                    >
-                      {tag}
-                    </span>
-                  );
-                })}
+                {hashtag &&
+                  hashtag.map((tag, index) => {
+                    return (
+                      <span
+                        key={index}
+                        className="text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1 bg-blue-200 text-blue-700 rounded-full"
+                        onClick={() => removeTag(tag)}
+                      >
+                        {tag}
+                      </span>
+                    );
+                  })}
               </div>
+
               <input
                 type="text"
+                id="hashtag"
                 onKeyDown={handleTags}
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="Add"
+                className="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="Enter hashtags"
+                required=""
               />
             </div>
           </div>
@@ -266,9 +296,9 @@ export default function NewGroup({ groups, setGroups }) {
           <div>
             <label
               htmlFor="Venue address"
-              className="block mb-2 text-sm font-medium text-gray-900 text-white"
+              className="block mb-2 text-sm font-medium  text-white"
             >
-              Venue address
+              Venue address*
             </label>
             <div>
               <GeoapifyContext apiKey="178a21e11be94a9f8f92b2a0221c8ac5">
@@ -285,9 +315,9 @@ export default function NewGroup({ groups, setGroups }) {
           <div>
             <label
               htmlFor="description"
-              className="block mb-2 text-sm font-medium text-gray-900 text-white"
+              className="block mb-2 text-sm font-medium  text-white"
             >
-              Group description
+              Group description*
             </label>
             <textarea
               id="description"
@@ -296,42 +326,23 @@ export default function NewGroup({ groups, setGroups }) {
                 setDescription(e.target.value);
               }}
               rows={4}
-              className="block p-2.5 w-full h-10 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="block p-2.5 w-full h-10  bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Write your thoughts here..."
               defaultValue={""}
             />
           </div>
         </div>
 
-        <div className="flex items-start mb-6">
-          <div className="flex items-center h-5">
-            <input
-              id="remember"
-              type="checkbox"
-              defaultValue=""
-              className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800"
-              required=""
-            />
-          </div>
-          <label
-            htmlFor="remember"
-            className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300 text-white"
+        {picture ? (
+          <button
+            onClick={handleNewGroup}
+            className="text-white mt-2 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 border-white"
           >
-            I agree with the{" "}
-            <a href="#" className="text-blue-600 hover:underline text-blue-500">
-              terms and conditions
-            </a>
-            .
-          </label>
-        </div>
-
-        {/* We changed this from handleNewGroup to handleSubmit */}
-        <button
-          onClick={handleNewGroup}
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 border-white"
-        >
-          Submit
-        </button>
+            Submit
+          </button>
+        ) : (
+          <div></div>
+        )}
 
         {error && (
           <div>

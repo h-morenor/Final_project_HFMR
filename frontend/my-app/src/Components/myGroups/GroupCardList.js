@@ -39,21 +39,28 @@ export default function GroupCardList({ group, groupId, loading }) {
     };
   }, [group]);
 
+  //h-[calc((100vh-136px)/2.5)]
   return (
     <div
       onClick={() => {
         navigate(`/group/${group._id}`);
       }}
-      className="card w-96 bg-base-100 shadow-xl m-auto p-2"
+      className="card  bg-base-100 shadow-xl p-2  h-[calc((100vh-220px)/2)] w-[360px] sm:w-[500px] cursor-pointer"
     >
-      <div className="flex justify-center gap-2  items-center h-1/4">
-        <img
-          className="object-cover w-full rounded-t-lg md:h-12 md:w-48 h-full md:rounded-none md:rounded-l-lg"
-          src={`http://localhost:3000/api/group/image/${group.picture}`}
-          alt="group pic"
-        />
-        <div>
-          <h5 className=" text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+      <div className="flex  gap-1 items-center content-center h-1/3">
+        <div className="object-cover w-1/4">
+          {group.picture !== "" && (
+            <img
+              //w-10 rounded-full bg-white
+              //object-cover w-full rounded-lg h-12 w-48 h-full
+              className="object-cover w-[60px] rounded-full items-center content-center"
+              src={`http://localhost:3000/api/group/image/${group.picture}`}
+              alt="group pic"
+            />
+          )}
+        </div>
+        <div className="w-3/4">
+          <h5 className=" text-2xl font-bold tracking-tight text-gray-900 dark:text-white truncate">
             {group.title}
           </h5>
           <div className="">
@@ -74,17 +81,19 @@ export default function GroupCardList({ group, groupId, loading }) {
           </div>
         </div>
       </div>
-      <div className="card-body h-2/3 m-0 p-0">
-        <div className="flex ">
-          <h2 className="font-bold">Members: </h2>
-          <p>{group.followersCount}</p>
+      <div className=" m-0 p-0">
+        <div className="flex   gap-1">
+          <h2 className="font-bold w-1/4 ">Members: </h2>
+          <p className=" w-3/4 "> {group.followersCount}</p>
         </div>
-        <div className="flex">
-          <h2 className="font-bold">Description: </h2>
-          <p>{group.description}</p>
+        <div className="flex  gap-1">
+          <h2 className="font-bold w-1/4">Description: </h2>
+          <p className="text-ellipsis overflow-hidden h-[70px] text-sm pt-0.5 w-3/4">
+            {group.description}
+          </p>
         </div>
-        <div>
-          <div className="card-actions justify-end rounded-full">
+        <div className="flex w-full">
+          <div className="card-actions w-2/4 flex justify-start items-center  ">
             {maxFollowersImage.map((followersId) => {
               return <FollowersInfo followersId={followersId} />;
             })}
@@ -97,8 +106,8 @@ export default function GroupCardList({ group, groupId, loading }) {
             )}
           </div>
 
-          <div>
-            <div className="badge badge-outline gap-1 ">
+          <div className="flex w-2/4 justify-end">
+            <div className="badge badge-outline gap-1 justify-end">
               {group.hashtag.map((tag) => {
                 return <p>{tag}</p>;
               })}
@@ -109,29 +118,3 @@ export default function GroupCardList({ group, groupId, loading }) {
     </div>
   );
 }
-
-/*  
- const [currentPage, setCurrentPage] = useState(1);
-  const [postsPerPage] = useState(2);
-
-const indexOfLastPost = currentPage * postsPerPage;
-  const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  
-
-  // Change page
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-  ///
-
-  return (
-    <div className="flex flex-col h-full">
-      {
-        <div className="flex flex-col justify-center h-full m-auto gap-2 p-1">
-          {currentPosts.map((group) => {
-            const groupId = group._id;
-            return (
-              <GroupCardList group={group} key={groupId} loading={loading} />
-            );
-          })}
-        </div>
-      }
-*/
